@@ -128,19 +128,26 @@ def cargar_datos():
         return pd.DataFrame()
 
 # ---------- CALCULAR PUNTUACIONES ----------
-def procesar_puntuaciones(df):
-    ias = ["Claude", "DeepSeek", "Gemini", "ChatGPT"]
-    for ia in ias:
-        col_l = f"{ia}_L"
-        col_v = f"{ia}_V"
-        df[f"Pts_{ia}"] = df.apply(
-            lambda row: calcular_puntaje(
-                row["GolesLocal"], row["GolesVisitante"],
-                row[col_l], row[col_v]
-            ) if pd.notna(row["GolesLocal"]) and pd.notna(row["GolesVisitante"]) else 0,
-            axis=1
-        )
-    return df
+def calcular_puntaje(local_real, visit_real, local_pred, visit_pred):
+    try:
+        local_real = float(local_real)
+        visit_real = float(visit_real)
+        local_pred = float(local_pred)
+        visit_pred = float(visit_pred)
+    except (TypeError, ValueError):
+        return 0  # Si no se puede convertir, puntaje 0
+
+    dif_real = local_real - visit_real
+    dif_pred = local_pred - visit_pred
+
+    if local_real == local_pred and visit_real == visit_pred:
+        return 5
+    elif dif_real == dif_pred and dif_real != 0:
+        return 3
+    elif (dif_real > 0 and dif_pred > 0) or (dif_real < 0 and dif_pred < 0):
+        return 2
+    else:
+        return 0
 # ---------- LOGO Y CABECERA ----------
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
