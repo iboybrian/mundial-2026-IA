@@ -99,17 +99,28 @@ def conectar_sheets():
     sheet = client.open_by_key(sheet_id).worksheet("Pronosticos")  # <--- CAMBIO AQUÍ
     return sheet
 
-# ---------- FUNCIÓN PARA CALCULAR PUNTAJE ----------
-def procesar_puntuaciones(local_real, visit_real, local_pro, visit_pro):
-    if local_pro == local_real and visit_pro == visit_real:
-        return 5
-    dif_real = local_real - visit_real
-    dif_pro = local_pro - visit_pro
-    if dif_real * dif_pro > 0 and abs(dif_real) == abs(dif_pro):
-        return 3
-    if dif_real * dif_pro > 0:
-        return 2
-    return 0
+# ---------- FUNCIÓN PARA PROCESAR PUNTUACIONES (DATAFRAME) ----------
+def procesar_puntuaciones(df):
+    df = df.copy()
+    ias = ["Claude", "DeepSeek", "Gemini", "ChatGPT"]
+    for ia in ias:
+        pts_col = f"Pts_{ia}"
+        total_col = f"Total_{ia}"
+        
+        pts_list = []
+        for idx, row in df.iterrows():
+            pts = calcular_puntaje(
+                row.get("GolesLocal"),
+                row.get("GolesVisitante"),
+                row.get(f"{ia}_L"),
+                row.get(f"{ia}_V")
+            )
+            pts_list.append(pts)
+            
+        df[pts_col] = pts_list
+        df[total_col] = df[pts_col].cumsum()
+        
+    return df
 
 # ---------- CARGAR DATOS DESDE SHEETS ----------
 def cargar_datos():
@@ -137,12 +148,13 @@ def calcular_puntaje(local_real, visit_real, local_pred, visit_pred):
     except (TypeError, ValueError):
         return 0  # Si no se puede convertir, puntaje 0
 
+    if local_real == local_pred and visit_real == visit_pred:
+        return 5
+    
     dif_real = local_real - visit_real
     dif_pred = local_pred - visit_pred
 
-    if local_real == local_pred and visit_real == visit_pred:
-        return 5
-    elif dif_real == dif_pred and dif_real != 0:
+    if dif_real == dif_pred:
         return 3
     elif (dif_real > 0 and dif_pred > 0) or (dif_real < 0 and dif_pred < 0):
         return 2
