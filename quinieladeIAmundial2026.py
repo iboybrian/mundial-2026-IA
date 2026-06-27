@@ -100,7 +100,7 @@ def conectar_sheets():
     return sheet
 
 # ---------- FUNCIÓN PARA CALCULAR PUNTAJE ----------
-def calcular_puntaje(local_real, visit_real, local_pro, visit_pro):
+def procesar_puntuaciones(local_real, visit_real, local_pro, visit_pro):
     if local_pro == local_real and visit_pro == visit_real:
         return 5
     dif_real = local_real - visit_real
