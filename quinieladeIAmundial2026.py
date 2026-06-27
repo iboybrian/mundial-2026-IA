@@ -15,6 +15,7 @@ st.set_page_config(
 
 # ---------- AUDIO (SILBATO Y MÚSICA) ----------
 st.markdown("""
+    <div id="top"></div>
     <audio autoplay>
         <source src="https://www.soundjay.com/misc/sounds/whistle-camp-1.mp3" type="audio/mpeg">
     </audio>
@@ -26,15 +27,29 @@ st.markdown("""
 # ---------- ESTILOS CSS ----------
 st.markdown("""
     <style>
-    .stApp { background-color: #0e1117; }
+    /* Background with subtle gradient */
+    .stApp { 
+        background: radial-gradient(circle at top, #1a1a2e, #0e1117); 
+        background-attachment: fixed;
+    }
+    
+    /* Glassmorphism Bracket Cards */
     .bracket-card {
-        background: #1e2330;
-        border-radius: 15px;
+        background: rgba(30, 35, 48, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
         padding: 20px;
         text-align: center;
         margin: 10px;
-        border: 1px solid #3a4050;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .bracket-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.25);
     }
     .bracket-card img {
         width: 80px;
@@ -43,21 +58,102 @@ st.markdown("""
     }
     .bracket-card p {
         color: white;
-        font-weight: bold;
-        margin-top: 10px;
+        font-weight: 700;
+        margin-top: 15px;
+        font-size: 1.1em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
+    
+    /* Copa Center Card */
     .copa-card {
-        background: #1e2330;
-        border-radius: 50%;
-        padding: 20px;
-        text-align: center;
-        border: 2px solid #f1c40f;
-        box-shadow: 0 0 20px #f1c40f55;
+        background: rgba(255, 215, 0, 0.08) !important;
+        border-radius: 50% !important;
+        border: 2px solid rgba(255, 215, 0, 0.6) !important;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.4) !important;
     }
     .copa-card img {
-        width: 100px;
-        height: 100px;
+        width: 100px !important;
+        height: 100px !important;
     }
+    
+    /* Match Result Cards */
+    .match-card {
+        background: rgba(30, 35, 48, 0.6);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+    .match-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+    
+    /* Individual AI Prediction Badge inside Match Card */
+    .ai-badge {
+        text-align: center; 
+        background: rgba(0, 0, 0, 0.3); 
+        padding: 15px; 
+        border-radius: 12px; 
+        width: 23%;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: transform 0.2s, background 0.2s;
+    }
+    .ai-badge:hover {
+        transform: scale(1.05);
+        background: rgba(0, 0, 0, 0.5);
+        border-color: rgba(255,255,255,0.2);
+    }
+    
+    /* Hero Title Gradient */
+    .hero-title {
+        text-align: center;
+        background: linear-gradient(90deg, #FFD700, #FDB931, #FFD700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 900;
+        font-size: 3.5em;
+        margin-bottom: 0px;
+        text-shadow: 0px 4px 15px rgba(255, 215, 0, 0.2);
+    }
+    .hero-subtitle {
+        text-align: center;
+        color: #a0aec0;
+        font-size: 1.3em;
+        margin-top: 10px;
+        margin-bottom: 40px;
+        font-weight: 300;
+    }
+
+    /* Back to Top Button */
+    .btn-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #4D4B96, #8E75B2);
+        color: white !important;
+        padding: 12px 25px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        z-index: 1000;
+        transition: all 0.3s;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-top:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+        text-decoration: none;
+        border-color: rgba(255,255,255,0.5);
+    }
+    
     .footer {
         position: fixed;
         bottom: 0;
@@ -70,10 +166,6 @@ st.markdown("""
         background: transparent;
     }
     .footer:hover { opacity: 0.3; }
-    .puntaje-highlight {
-        font-weight: bold;
-        color: #FFD700;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -157,7 +249,10 @@ def calcular_puntaje(local_real, visit_real, local_pred, visit_pred):
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("logo.png", use_container_width=True)
-    st.markdown("<h1 style='text-align: center; color: #FFD700;'>🏆 IA WORLD CUP PREDICTOR CHALLENGE</h1>", unsafe_allow_html=True)
+    st.markdown("""
+        <h1 class='hero-title'>🏆 IA WORLD CUP PREDICTOR</h1>
+        <p class='hero-subtitle'>Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026</p>
+    """, unsafe_allow_html=True)
 
 # ---------- BRACKET DE IAS ----------
 st.markdown("## 🤖 ¿Quién será el mejor pronosticador?")
@@ -165,7 +260,7 @@ st.markdown("## 🤖 ¿Quién será el mejor pronosticador?")
 ias = {
     "Claude": "https://cdn.simpleicons.org/claude/D97757",
     "DeepSeek": "https://cdn.simpleicons.org/deepseek/4D4B96",
-    "Gemini": "https://cdn.simpleicons.org/googlegemini/8E75B2",
+    "Gemini": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg",
     "ChatGPT": "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
 }
 
@@ -185,8 +280,8 @@ with cols[1]:
         </div>
     """, unsafe_allow_html=True)
 with cols[2]:
-    # Logo oficial del Mundial 2026 (con fondo colorido)
-    logo_url = "https://digitalhub.fifa.com/transform/4e622b7f-3db3-441f-8012-c2e36696dbf1/FIFA-World-Cup-2026-Brand-Launch-Generic-News-Article-Header"
+    # Logo oficial del Mundial 2026 (imagen local)
+    logo_url = "fifa.jpg"
     st.markdown(f"""
         <div class="bracket-card copa-card" style="border-color: #ffffff; box-shadow: 0 0 20px #ffffff55;">
             <img src="{logo_url}" alt="Copa" style="width: 120px; height: 120px; object-fit: contain;">
@@ -239,31 +334,31 @@ if not df.empty:
         # Tarjeta del partido
         with st.container():
             st.markdown(f"""
-<div style="background-color: #1e2330; border-radius: 10px; padding: 15px; margin-bottom: 20px; border: 1px solid #3a4050;">
-<h3 style="text-align: center; color: #ffffff; margin-bottom: 5px;">
+<div class="match-card">
+<h3 style="text-align: center; color: #ffffff; margin-bottom: 5px; font-size: 1.8em; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
 {row.get('Local', 'Local')} {row.get('GolesLocal', '-')} : {row.get('GolesVisitante', '-')} {row.get('Visitante', 'Visitante')}
 </h3>
-<p style="text-align: center; color: #8892b0; font-size: 14px; margin-bottom: 15px;">Fecha: {row.get('Fecha', '')}</p>
-<div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-<strong style="color: #D97757;">Claude</strong><br>
-<span style="font-size: 18px;">{row.get('Claude_L', '-')} - {row.get('Claude_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Claude', 0)} pts</span>
+<p style="text-align: center; color: #a0aec0; font-size: 15px; margin-bottom: 25px;">📅 Fecha: {row.get('Fecha', '')}</p>
+<div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px;">
+<div class="ai-badge">
+<strong style="color: #D97757; font-size: 1.2em;">Claude</strong><br>
+<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('Claude_L', '-')} - {row.get('Claude_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_Claude', 0)} pts</span>
 </div>
-<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-<strong style="color: #4D4B96;">DeepSeek</strong><br>
-<span style="font-size: 18px;">{row.get('DeepSeek_L', '-')} - {row.get('DeepSeek_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_DeepSeek', 0)} pts</span>
+<div class="ai-badge">
+<strong style="color: #4D4B96; font-size: 1.2em;">DeepSeek</strong><br>
+<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('DeepSeek_L', '-')} - {row.get('DeepSeek_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_DeepSeek', 0)} pts</span>
 </div>
-<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-<strong style="color: #8E75B2;">Gemini</strong><br>
-<span style="font-size: 18px;">{row.get('Gemini_L', '-')} - {row.get('Gemini_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Gemini', 0)} pts</span>
+<div class="ai-badge">
+<strong style="color: #8E75B2; font-size: 1.2em;">Gemini</strong><br>
+<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('Gemini_L', '-')} - {row.get('Gemini_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_Gemini', 0)} pts</span>
 </div>
-<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-<strong style="color: #74aa9c;">ChatGPT</strong><br>
-<span style="font-size: 18px;">{row.get('ChatGPT_L', '-')} - {row.get('ChatGPT_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_ChatGPT', 0)} pts</span>
+<div class="ai-badge">
+<strong style="color: #74aa9c; font-size: 1.2em;">ChatGPT</strong><br>
+<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('ChatGPT_L', '-')} - {row.get('ChatGPT_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_ChatGPT', 0)} pts</span>
 </div>
 </div>
 </div>
@@ -345,4 +440,9 @@ if st.session_state.show_admin:
 
 # ---------- PIE DE PÁGINA ----------
 st.markdown("---")
-st.caption("⚽ Datos actualizados en tiempo real | Desarrollado con Streamlit")
+st.markdown("""
+<div style="text-align: center; padding-bottom: 50px;">
+    <p style="color: #8892b0; font-size: 14px;">⚽ Datos actualizados en tiempo real | Desarrollado con Streamlit</p>
+    <a href="#top" target="_self" class="btn-top">⬆️ Regresar Arriba</a>
+</div>
+""", unsafe_allow_html=True)
