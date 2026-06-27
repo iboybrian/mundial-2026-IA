@@ -79,12 +79,9 @@ st.markdown("""
     
     /* Responsive Queries */
     @media (max-width: 768px) {
-        .ai-badge { width: 48% !important; margin-bottom: 10px; }
+        .ai-badge { width: 45% !important; margin-bottom: 10px; }
         .hero-title { font-size: 2em !important; }
         .bracket-card img { width: 60px !important; height: 60px !important; }
-    }
-    @media (max-width: 480px) {
-        .ai-badge { width: 100% !important; }
     }
     
     /* Match Result Cards */
