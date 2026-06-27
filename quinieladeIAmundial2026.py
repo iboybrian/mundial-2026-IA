@@ -91,10 +91,12 @@ def conectar_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    # Reemplaza con el ID de tu hoja (lo obtienes de la URL)
-    sheet_id = st.secrets["sheet_id"]
-    # ✅ Línea correcta (lee la pestaña que tú quieres)
-    sheet = client.open_by_key(SHEET_ID).worksheet("Pronosticos")
+    
+    # ✅ CORRECCIÓN 1: Obtén el ID desde la ruta correcta
+    sheet_id = st.secrets["sheets"]["sheet_id"]  # <--- CAMBIO AQUÍ
+    
+    # ✅ CORRECCIÓN 2: Usa la variable sheet_id (no SHEET_ID)
+    sheet = client.open_by_key(sheet_id).worksheet("Pronosticos")  # <--- CAMBIO AQUÍ
     return sheet
 
 # ---------- FUNCIÓN PARA CALCULAR PUNTAJE ----------
