@@ -166,7 +166,7 @@ ias = {
     "Claude": "https://cdn.simpleicons.org/claude/D97757",
     "DeepSeek": "https://cdn.simpleicons.org/deepseek/4D4B96",
     "Gemini": "https://cdn.simpleicons.org/googlegemini/8E75B2",
-    "ChatGPT": "https://cdn.simpleicons.org/openai/74aa9c"
+    "ChatGPT": "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
 }
 
 cols = st.columns(5)
@@ -185,8 +185,8 @@ with cols[1]:
         </div>
     """, unsafe_allow_html=True)
 with cols[2]:
-    # Logo oficial del Mundial 2026 de Wikimedia Commons
-    logo_url = "https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/2026_FIFA_World_Cup_logo.svg/1200px-2026_FIFA_World_Cup_logo.svg.png"
+    # Logo oficial del Mundial 2026 (con fondo colorido)
+    logo_url = "https://digitalhub.fifa.com/transform/4e622b7f-3db3-441f-8012-c2e36696dbf1/FIFA-World-Cup-2026-Brand-Launch-Generic-News-Article-Header"
     st.markdown(f"""
         <div class="bracket-card copa-card" style="border-color: #ffffff; box-shadow: 0 0 20px #ffffff55;">
             <img src="{logo_url}" alt="Copa" style="width: 120px; height: 120px; object-fit: contain;">
@@ -239,36 +239,35 @@ if not df.empty:
         # Tarjeta del partido
         with st.container():
             st.markdown(f"""
-            <div style="background-color: #1e2330; border-radius: 10px; padding: 15px; margin-bottom: 20px; border: 1px solid #3a4050;">
-                <h3 style="text-align: center; color: #ffffff; margin-bottom: 5px;">
-                    {row.get('Local', 'Local')} {row.get('GolesLocal', '-')} : {row.get('GolesVisitante', '-')} {row.get('Visitante', 'Visitante')}
-                </h3>
-                <p style="text-align: center; color: #8892b0; font-size: 14px; margin-bottom: 15px;">Fecha: {row.get('Fecha', '')}</p>
-                
-                <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-                        <strong style="color: #D97757;">Claude</strong><br>
-                        <span style="font-size: 18px;">{row.get('Claude_L', '-')} - {row.get('Claude_V', '-')}</span><br>
-                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Claude', 0)} pts</span>
-                    </div>
-                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-                        <strong style="color: #4D4B96;">DeepSeek</strong><br>
-                        <span style="font-size: 18px;">{row.get('DeepSeek_L', '-')} - {row.get('DeepSeek_V', '-')}</span><br>
-                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_DeepSeek', 0)} pts</span>
-                    </div>
-                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-                        <strong style="color: #8E75B2;">Gemini</strong><br>
-                        <span style="font-size: 18px;">{row.get('Gemini_L', '-')} - {row.get('Gemini_V', '-')}</span><br>
-                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Gemini', 0)} pts</span>
-                    </div>
-                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
-                        <strong style="color: #74aa9c;">ChatGPT</strong><br>
-                        <span style="font-size: 18px;">{row.get('ChatGPT_L', '-')} - {row.get('ChatGPT_V', '-')}</span><br>
-                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_ChatGPT', 0)} pts</span>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+<div style="background-color: #1e2330; border-radius: 10px; padding: 15px; margin-bottom: 20px; border: 1px solid #3a4050;">
+<h3 style="text-align: center; color: #ffffff; margin-bottom: 5px;">
+{row.get('Local', 'Local')} {row.get('GolesLocal', '-')} : {row.get('GolesVisitante', '-')} {row.get('Visitante', 'Visitante')}
+</h3>
+<p style="text-align: center; color: #8892b0; font-size: 14px; margin-bottom: 15px;">Fecha: {row.get('Fecha', '')}</p>
+<div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+<strong style="color: #D97757;">Claude</strong><br>
+<span style="font-size: 18px;">{row.get('Claude_L', '-')} - {row.get('Claude_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Claude', 0)} pts</span>
+</div>
+<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+<strong style="color: #4D4B96;">DeepSeek</strong><br>
+<span style="font-size: 18px;">{row.get('DeepSeek_L', '-')} - {row.get('DeepSeek_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_DeepSeek', 0)} pts</span>
+</div>
+<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+<strong style="color: #8E75B2;">Gemini</strong><br>
+<span style="font-size: 18px;">{row.get('Gemini_L', '-')} - {row.get('Gemini_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Gemini', 0)} pts</span>
+</div>
+<div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+<strong style="color: #74aa9c;">ChatGPT</strong><br>
+<span style="font-size: 18px;">{row.get('ChatGPT_L', '-')} - {row.get('ChatGPT_V', '-')}</span><br>
+<span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_ChatGPT', 0)} pts</span>
+</div>
+</div>
+</div>
+""", unsafe_allow_html=True)
 
 else:
     st.warning("No hay datos cargados. Agrega pronósticos desde el panel de administración.")
