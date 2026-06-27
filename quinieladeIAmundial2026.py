@@ -67,14 +67,24 @@ st.markdown("""
     
     /* Copa Center Card */
     .copa-card {
-        background: rgba(255, 215, 0, 0.08) !important;
-        border-radius: 50% !important;
-        border: 2px solid rgba(255, 215, 0, 0.6) !important;
-        box-shadow: 0 0 30px rgba(255, 215, 0, 0.4) !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
     .copa-card img {
-        width: 100px !important;
-        height: 100px !important;
+        width: 150px !important;
+        height: 150px !important;
+        object-fit: contain;
+    }
+    
+    /* Responsive Queries */
+    @media (max-width: 768px) {
+        .ai-badge { width: 48% !important; margin-bottom: 10px; }
+        .hero-title { font-size: 2em !important; }
+        .bracket-card img { width: 60px !important; height: 60px !important; }
+    }
+    @media (max-width: 480px) {
+        .ai-badge { width: 100% !important; }
     }
     
     /* Match Result Cards */
@@ -251,6 +261,14 @@ with col2:
     st.image("logo.png", use_container_width=True)
     st.markdown("""
         <h1 class='hero-title' style='font-size: 2.5em; line-height: 1.2; margin-bottom: 30px;'>Las IA compiten para ver quien es mejor prediciendo los partidos del mundial 2026</h1>
+        <div style="text-align: center; color: #a0aec0; font-size: 1.1em; max-width: 800px; margin: 0 auto 40px auto; line-height: 1.6; background: rgba(30, 35, 48, 0.6); padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <strong style="color: white; font-size: 1.2em;">Reglas de puntuación:</strong><br>
+            🎯 Por acierto de marcador suman <strong style="color: #FFD700;">5 puntos</strong><br>
+            ✅ Por acierto de ganador y diferencia de goles suman <strong style="color: #FFD700;">3 puntos</strong><br>
+            ✔️ Por acierto de ganador <strong style="color: #FFD700;">2 puntos</strong><br>
+            ❌ Todo lo demas es <strong style="color: #FFD700;">0 puntos</strong><br>
+            <em style="display: block; margin-top: 10px; color: white;">¡Que ruede el balón y veamos quién será la mejor analizadora!</em>
+        </div>
     """, unsafe_allow_html=True)
 
 # ---------- BRACKET DE IAS ----------
@@ -288,9 +306,8 @@ with cols[2]:
     except Exception:
         logo_url = ""
     st.markdown(f"""
-        <div class="bracket-card copa-card" style="border-color: #ffffff; box-shadow: 0 0 20px #ffffff55;">
-            <img src="{logo_url}" alt="Copa" style="width: 120px; height: 120px; object-fit: contain;">
-            <p style="color: #ffffff;">🏆 CAMPEÓN</p>
+        <div class="bracket-card copa-card">
+            <img src="{logo_url}" alt="Copa">
         </div>
     """, unsafe_allow_html=True)
 with cols[3]:
@@ -316,7 +333,7 @@ if not df.empty:
     df_procesado = procesar_puntuaciones(df)
     
     # Mostrar tabla principal
-    st.subheader("📊 Tabla de Posiciones")
+    st.markdown("<h2 style='color: white; font-weight: 800; font-size: 2.2em; margin-bottom: 20px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);'>Tabla de posiciones al momento</h2>", unsafe_allow_html=True)
     
     # Crear tabla de resumen (totales por IA)
     resumen = pd.DataFrame({
@@ -333,7 +350,7 @@ if not df.empty:
     st.dataframe(resumen, use_container_width=True, hide_index=True)
     
     # Mostrar detalle de partidos agrupado
-    st.subheader("📋 Resultados y Predicciones por Partido")
+    st.markdown("<h2 style='color: white; font-weight: 800; font-size: 2.2em; margin-top: 40px; margin-bottom: 20px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);'>Resultados y Predicciones por Partido</h2>", unsafe_allow_html=True)
     
     for idx, row in df_procesado.iterrows():
         # Tarjeta del partido
