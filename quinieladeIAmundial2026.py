@@ -250,8 +250,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("logo.png", use_container_width=True)
     st.markdown("""
-        <h1 class='hero-title'>🏆 IA WORLD CUP PREDICTOR</h1>
-        <p class='hero-subtitle'>Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026</p>
+        <h1 class='hero-title' style='font-size: 2.5em; line-height: 1.2; margin-bottom: 30px;'>Las IA compiten para ver quien es mejor prediciendo los partidos del mundial 2026</h1>
     """, unsafe_allow_html=True)
 
 # ---------- BRACKET DE IAS ----------
@@ -280,8 +279,14 @@ with cols[1]:
         </div>
     """, unsafe_allow_html=True)
 with cols[2]:
-    # Logo oficial del Mundial 2026 (imagen local)
-    logo_url = "fifa.jpg"
+    # Logo oficial del Mundial 2026 (imagen local convertida a base64)
+    import base64
+    try:
+        with open("fifa.jpg", "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+        logo_url = f"data:image/jpeg;base64,{encoded_string}"
+    except Exception:
+        logo_url = ""
     st.markdown(f"""
         <div class="bracket-card copa-card" style="border-color: #ffffff; box-shadow: 0 0 20px #ffffff55;">
             <img src="{logo_url}" alt="Copa" style="width: 120px; height: 120px; object-fit: contain;">
