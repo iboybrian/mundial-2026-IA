@@ -378,17 +378,17 @@ if not df.empty:
     
     # Mostrar tabla de posiciones ocultando el índice (HTML personalizado con iconos y números grandes)
     leaderboard_html = f"""
-    <div style="background: rgba(30, 35, 48, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.08); max-width: 600px; margin: 20px auto 40px auto; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
-        <table style="width: 100%; border-collapse: collapse; color: white;">
-            <thead>
-                <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); text-align: left;">
-                    <th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">Posición</th>
-                    <th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">IA</th>
-                    <th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em; text-align: right;">Puntaje</th>
-                </tr>
-            </thead>
-            <tbody>
-    """
+<div style="background: rgba(30, 35, 48, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.08); max-width: 600px; margin: 20px auto 40px auto; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+<table style="width: 100%; border-collapse: collapse; color: white;">
+<thead>
+<tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); text-align: left;">
+<th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">Posición</th>
+<th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">IA</th>
+<th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em; text-align: right;">Puntaje</th>
+</tr>
+</thead>
+<tbody>
+"""
     for index, row in resumen.iterrows():
         name = row['IA']
         score = row['Puntaje']
@@ -396,20 +396,20 @@ if not df.empty:
         medal = "🥇" if index == 0 else "🥈" if index == 1 else "🥉" if index == 2 else "🏅"
         
         leaderboard_html += f"""
-                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s;">
-                    <td style="padding: 15px 12px; font-weight: bold; font-size: 1.3em;">{medal} {index + 1}</td>
-                    <td style="padding: 15px 12px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2em;">
-                        <img src="{icon_url}" style="width: 28px; height: 28px; object-fit: contain; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);" alt="{name}">
-                        <span>{name}</span>
-                    </td>
-                    <td style="padding: 15px 12px; text-align: right; font-weight: 900; font-size: 2.2em; color: #FFD700; text-shadow: 0 2px 5px rgba(0,0,0,0.5);">{score}</td>
-                </tr>
-        """
+<tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s;">
+<td style="padding: 15px 12px; font-weight: bold; font-size: 1.3em;">{medal} {index + 1}</td>
+<td style="padding: 15px 12px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2em;">
+<img src="{icon_url}" style="width: 28px; height: 28px; object-fit: contain; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);" alt="{name}">
+<span>{name}</span>
+</td>
+<td style="padding: 15px 12px; text-align: right; font-weight: 900; font-size: 2.2em; color: #FFD700; text-shadow: 0 2px 5px rgba(0,0,0,0.5);">{score}</td>
+</tr>
+"""
     leaderboard_html += """
-            </tbody>
-        </table>
-    </div>
-    """
+</tbody>
+</table>
+</div>
+"""
     st.markdown(leaderboard_html, unsafe_allow_html=True)
     
     # Mostrar detalle de partidos agrupado
