@@ -129,26 +129,18 @@ def cargar_datos():
 
 # ---------- CALCULAR PUNTUACIONES ----------
 def procesar_puntuaciones(df):
-    if df.empty:
-        return df
-    
     ias = ["Claude", "DeepSeek", "Gemini", "ChatGPT"]
     for ia in ias:
-        col_local = f"{ia}_L"
-        col_visit = f"{ia}_V"
-        # Calcular puntaje para cada fila
+        col_l = f"{ia}_L"
+        col_v = f"{ia}_V"
         df[f"Pts_{ia}"] = df.apply(
             lambda row: calcular_puntaje(
                 row["GolesLocal"], row["GolesVisitante"],
-                row[col_local], row[col_visit]
+                row[col_l], row[col_v]
             ) if pd.notna(row["GolesLocal"]) and pd.notna(row["GolesVisitante"]) else 0,
             axis=1
         )
-        # Total acumulado
-        df[f"Total_{ia}"] = df[f"Pts_{ia}"].cumsum()
-    
     return df
-
 # ---------- LOGO Y CABECERA ----------
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
