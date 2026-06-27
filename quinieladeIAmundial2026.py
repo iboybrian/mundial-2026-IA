@@ -13,22 +13,15 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------- BLOQUE DE DEPURACIÓN DE SECRETS ----------
-st.write("### 🔍 Depuración de Secrets")
-st.write("Contenido completo de st.secrets:", st.secrets)
-
-if "sheets" in st.secrets:
-    st.write("✅ La clave 'sheets' EXISTE")
-    st.write("Contenido de sheets:", st.secrets["sheets"])
-    if "sheet_id" in st.secrets["sheets"]:
-        st.write("✅ 'sheet_id' EXISTE dentro de sheets")
-        st.write("Valor de sheet_id:", st.secrets["sheets"]["sheet_id"])
-    else:
-        st.write("❌ 'sheet_id' NO EXISTE dentro de sheets")
-else:
-    st.write("❌ La clave 'sheets' NO EXISTE en st.secrets")
-    st.write("Las claves disponibles son:", list(st.secrets.keys()))
-# ---------- FIN DEL BLOQUE DE DEPURACIÓN ----------
+# ---------- AUDIO (SILBATO Y MÚSICA) ----------
+st.markdown("""
+    <audio autoplay>
+        <source src="https://www.soundjay.com/misc/sounds/whistle-camp-1.mp3" type="audio/mpeg">
+    </audio>
+    <audio autoplay loop>
+        <source src="https://cdn.pixabay.com/audio/2022/10/14/audio_9939ef2a23.mp3" type="audio/mpeg">
+    </audio>
+""", unsafe_allow_html=True)
 
 # ---------- ESTILOS CSS ----------
 st.markdown("""
@@ -170,10 +163,10 @@ with col2:
 st.markdown("## 🤖 ¿Quién será el mejor pronosticador?")
 
 ias = {
-    "Claude": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/claude.svg",
-    "DeepSeek": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/deepseek.svg",
-    "Gemini": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/google.svg",
-    "ChatGPT": "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/openai.svg"
+    "Claude": "https://cdn.simpleicons.org/claude/D97757",
+    "DeepSeek": "https://cdn.simpleicons.org/deepseek/4D4B96",
+    "Gemini": "https://cdn.simpleicons.org/googlegemini/8E75B2",
+    "ChatGPT": "https://cdn.simpleicons.org/openai/74aa9c"
 }
 
 cols = st.columns(5)
@@ -192,10 +185,12 @@ with cols[1]:
         </div>
     """, unsafe_allow_html=True)
 with cols[2]:
+    # Logo oficial del Mundial 2026 de Wikimedia Commons
+    logo_url = "https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/2026_FIFA_World_Cup_logo.svg/1200px-2026_FIFA_World_Cup_logo.svg.png"
     st.markdown(f"""
-        <div class="bracket-card copa-card">
-            <img src="logo.png" alt="Copa">
-            <p style="color: #FFD700;">🏆 CAMPEÓN</p>
+        <div class="bracket-card copa-card" style="border-color: #ffffff; box-shadow: 0 0 20px #ffffff55;">
+            <img src="{logo_url}" alt="Copa" style="width: 120px; height: 120px; object-fit: contain;">
+            <p style="color: #ffffff;">🏆 CAMPEÓN</p>
         </div>
     """, unsafe_allow_html=True)
 with cols[3]:
@@ -226,27 +221,54 @@ if not df.empty:
     # Crear tabla de resumen (totales por IA)
     resumen = pd.DataFrame({
         "IA": ["Claude", "DeepSeek", "Gemini", "ChatGPT"],
-        "Puntaje Total": [
+        "Puntaje": [
             df_procesado["Total_Claude"].iloc[-1] if not df_procesado.empty else 0,
             df_procesado["Total_DeepSeek"].iloc[-1] if not df_procesado.empty else 0,
             df_procesado["Total_Gemini"].iloc[-1] if not df_procesado.empty else 0,
             df_procesado["Total_ChatGPT"].iloc[-1] if not df_procesado.empty else 0
         ]
-    }).sort_values("Puntaje Total", ascending=False)
+    }).sort_values("Puntaje", ascending=False).reset_index(drop=True)
     
-    st.dataframe(resumen, use_container_width=True)
+    # Mostrar tabla de posiciones ocultando el índice
+    st.dataframe(resumen, use_container_width=True, hide_index=True)
     
-    # Mostrar detalle de partidos
-    st.subheader("📋 Detalle de Partidos")
-    # Seleccionar columnas a mostrar (ajusta según tus columnas)
-    columnas_mostrar = ["Fecha", "Local", "Visitante", "GolesLocal", "GolesVisitante",
-                        "Claude_L", "Claude_V", "Pts_Claude",
-                        "DeepSeek_L", "DeepSeek_V", "Pts_DeepSeek",
-                        "Gemini_L", "Gemini_V", "Pts_Gemini",
-                        "ChatGPT_L", "ChatGPT_V", "Pts_ChatGPT"]
-    # Filtrar solo las que existen
-    columnas_existentes = [col for col in columnas_mostrar if col in df_procesado.columns]
-    st.dataframe(df_procesado[columnas_existentes], use_container_width=True)
+    # Mostrar detalle de partidos agrupado
+    st.subheader("📋 Resultados y Predicciones por Partido")
+    
+    for idx, row in df_procesado.iterrows():
+        # Tarjeta del partido
+        with st.container():
+            st.markdown(f"""
+            <div style="background-color: #1e2330; border-radius: 10px; padding: 15px; margin-bottom: 20px; border: 1px solid #3a4050;">
+                <h3 style="text-align: center; color: #ffffff; margin-bottom: 5px;">
+                    {row.get('Local', 'Local')} {row.get('GolesLocal', '-')} : {row.get('GolesVisitante', '-')} {row.get('Visitante', 'Visitante')}
+                </h3>
+                <p style="text-align: center; color: #8892b0; font-size: 14px; margin-bottom: 15px;">Fecha: {row.get('Fecha', '')}</p>
+                
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+                        <strong style="color: #D97757;">Claude</strong><br>
+                        <span style="font-size: 18px;">{row.get('Claude_L', '-')} - {row.get('Claude_V', '-')}</span><br>
+                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Claude', 0)} pts</span>
+                    </div>
+                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+                        <strong style="color: #4D4B96;">DeepSeek</strong><br>
+                        <span style="font-size: 18px;">{row.get('DeepSeek_L', '-')} - {row.get('DeepSeek_V', '-')}</span><br>
+                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_DeepSeek', 0)} pts</span>
+                    </div>
+                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+                        <strong style="color: #8E75B2;">Gemini</strong><br>
+                        <span style="font-size: 18px;">{row.get('Gemini_L', '-')} - {row.get('Gemini_V', '-')}</span><br>
+                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_Gemini', 0)} pts</span>
+                    </div>
+                    <div style="text-align: center; background: #2a3040; padding: 10px; border-radius: 8px; width: 22%;">
+                        <strong style="color: #74aa9c;">ChatGPT</strong><br>
+                        <span style="font-size: 18px;">{row.get('ChatGPT_L', '-')} - {row.get('ChatGPT_V', '-')}</span><br>
+                        <span style="color: #FFD700; font-weight: bold;">+{row.get('Pts_ChatGPT', 0)} pts</span>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 else:
     st.warning("No hay datos cargados. Agrega pronósticos desde el panel de administración.")
