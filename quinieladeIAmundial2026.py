@@ -71,14 +71,58 @@ st.markdown("""
         border: none !important;
         box-shadow: none !important;
     }
-    .copa-card img {
-        width: 150px !important;
-        height: 150px !important;
+    
+    /* Bracket Grid Layout (2x2 for LLMs with FIFA logo in center/top) */
+    .bracket-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.8fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 20px;
+        align-items: center;
+        max-width: 900px;
+        margin: 20px auto;
+    }
+    .bracket-grid > .llm-card-1 { grid-column: 1; grid-row: 1; }
+    .bracket-grid > .llm-card-2 { grid-column: 3; grid-row: 1; }
+    .bracket-grid > .fifa-container { 
+        grid-column: 2; 
+        grid-row: 1 / span 2; 
+        text-align: center; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .bracket-grid > .llm-card-3 { grid-column: 1; grid-row: 2; }
+    .bracket-grid > .llm-card-4 { grid-column: 3; grid-row: 2; }
+    
+    .fifa-container img {
+        width: 250px !important;
+        height: 250px !important;
         object-fit: contain;
+        filter: drop-shadow(0 0 35px rgba(255, 255, 255, 0.25));
+        transition: transform 0.3s ease;
+    }
+    .fifa-container img:hover {
+        transform: scale(1.08);
     }
     
     /* Responsive Queries */
     @media (max-width: 768px) {
+        .bracket-grid {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 15px;
+        }
+        .bracket-grid > .llm-card-1 { grid-column: 1; grid-row: 1; }
+        .bracket-grid > .llm-card-2 { grid-column: 2; grid-row: 1; }
+        .bracket-grid > .fifa-container { grid-column: 1 / span 2; grid-row: 2; }
+        .bracket-grid > .llm-card-3 { grid-column: 1; grid-row: 3; }
+        .bracket-grid > .llm-card-4 { grid-column: 2; grid-row: 3; }
+        
+        .fifa-container img {
+            width: 200px !important;
+            height: 200px !important;
+        }
         .ai-badge { width: 45% !important; margin-bottom: 10px; }
         .hero-title { font-size: 2em !important; }
         .bracket-card img { width: 60px !important; height: 60px !important; }
@@ -278,49 +322,38 @@ ias = {
     "ChatGPT": "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
 }
 
-cols = st.columns(5)
-with cols[0]:
-    st.markdown(f"""
-        <div class="bracket-card">
-            <img src="{ias['Claude']}" alt="Claude">
-            <p>Claude</p>
-        </div>
-    """, unsafe_allow_html=True)
-with cols[1]:
-    st.markdown(f"""
-        <div class="bracket-card">
-            <img src="{ias['DeepSeek']}" alt="DeepSeek">
-            <p>DeepSeek</p>
-        </div>
-    """, unsafe_allow_html=True)
-with cols[2]:
-    # Logo oficial del Mundial 2026 (imagen local convertida a base64)
-    import base64
-    try:
-        with open("fifa.jpg", "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode()
-        logo_url = f"data:image/jpeg;base64,{encoded_string}"
-    except Exception:
-        logo_url = ""
-    st.markdown(f"""
-        <div class="bracket-card copa-card">
-            <img src="{logo_url}" alt="Copa">
-        </div>
-    """, unsafe_allow_html=True)
-with cols[3]:
-    st.markdown(f"""
-        <div class="bracket-card">
-            <img src="{ias['Gemini']}" alt="Gemini">
-            <p>Gemini</p>
-        </div>
-    """, unsafe_allow_html=True)
-with cols[4]:
-    st.markdown(f"""
-        <div class="bracket-card">
-            <img src="{ias['ChatGPT']}" alt="ChatGPT">
-            <p>ChatGPT</p>
-        </div>
-    """, unsafe_allow_html=True)
+# Logo oficial del Mundial 2026 (imagen local convertida a base64)
+import base64
+try:
+    with open("fifa.jpg", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode()
+    logo_url = f"data:image/jpeg;base64,{encoded_string}"
+except Exception:
+    logo_url = ""
+
+st.markdown(f"""
+<div class="bracket-grid">
+    <div class="bracket-card llm-card-1">
+        <img src="{ias['Claude']}" alt="Claude">
+        <p>Claude</p>
+    </div>
+    <div class="bracket-card llm-card-2">
+        <img src="{ias['Gemini']}" alt="Gemini">
+        <p>Gemini</p>
+    </div>
+    <div class="fifa-container">
+        <img src="{logo_url}" alt="FIFA 2026">
+    </div>
+    <div class="bracket-card llm-card-3">
+        <img src="{ias['DeepSeek']}" alt="DeepSeek">
+        <p>DeepSeek</p>
+    </div>
+    <div class="bracket-card llm-card-4">
+        <img src="{ias['ChatGPT']}" alt="ChatGPT">
+        <p>ChatGPT</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
@@ -343,8 +376,41 @@ if not df.empty:
         ]
     }).sort_values("Puntaje", ascending=False).reset_index(drop=True)
     
-    # Mostrar tabla de posiciones ocultando el índice
-    st.dataframe(resumen, use_container_width=True, hide_index=True)
+    # Mostrar tabla de posiciones ocultando el índice (HTML personalizado con iconos y números grandes)
+    leaderboard_html = f"""
+    <div style="background: rgba(30, 35, 48, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.08); max-width: 600px; margin: 20px auto 40px auto; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
+        <table style="width: 100%; border-collapse: collapse; color: white;">
+            <thead>
+                <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); text-align: left;">
+                    <th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">Posición</th>
+                    <th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">IA</th>
+                    <th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em; text-align: right;">Puntaje</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+    for index, row in resumen.iterrows():
+        name = row['IA']
+        score = row['Puntaje']
+        icon_url = ias.get(name, "")
+        medal = "🥇" if index == 0 else "🥈" if index == 1 else "🥉" if index == 2 else "🏅"
+        
+        leaderboard_html += f"""
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s;">
+                    <td style="padding: 15px 12px; font-weight: bold; font-size: 1.3em;">{medal} {index + 1}</td>
+                    <td style="padding: 15px 12px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2em;">
+                        <img src="{icon_url}" style="width: 28px; height: 28px; object-fit: contain; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);" alt="{name}">
+                        <span>{name}</span>
+                    </td>
+                    <td style="padding: 15px 12px; text-align: right; font-weight: 900; font-size: 2.2em; color: #FFD700; text-shadow: 0 2px 5px rgba(0,0,0,0.5);">{score}</td>
+                </tr>
+        """
+    leaderboard_html += """
+            </tbody>
+        </table>
+    </div>
+    """
+    st.markdown(leaderboard_html, unsafe_allow_html=True)
     
     # Mostrar detalle de partidos agrupado
     st.markdown("<h2 style='color: white; font-weight: 800; font-size: 2.2em; margin-top: 40px; margin-bottom: 20px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);'>Resultados y Predicciones por Partido</h2>", unsafe_allow_html=True)
