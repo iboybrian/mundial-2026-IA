@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st  # ✅ Solo una vez
 import pandas as pd
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -12,6 +12,23 @@ st.set_page_config(
     page_icon="⚽",
     layout="wide"
 )
+
+# ---------- BLOQUE DE DEPURACIÓN DE SECRETS ----------
+st.write("### 🔍 Depuración de Secrets")
+st.write("Contenido completo de st.secrets:", st.secrets)
+
+if "sheets" in st.secrets:
+    st.write("✅ La clave 'sheets' EXISTE")
+    st.write("Contenido de sheets:", st.secrets["sheets"])
+    if "sheet_id" in st.secrets["sheets"]:
+        st.write("✅ 'sheet_id' EXISTE dentro de sheets")
+        st.write("Valor de sheet_id:", st.secrets["sheets"]["sheet_id"])
+    else:
+        st.write("❌ 'sheet_id' NO EXISTE dentro de sheets")
+else:
+    st.write("❌ La clave 'sheets' NO EXISTE en st.secrets")
+    st.write("Las claves disponibles son:", list(st.secrets.keys()))
+# ---------- FIN DEL BLOQUE DE DEPURACIÓN ----------
 
 # ---------- ESTILOS CSS ----------
 st.markdown("""
@@ -76,7 +93,8 @@ def conectar_sheets():
     client = gspread.authorize(creds)
     # Reemplaza con el ID de tu hoja (lo obtienes de la URL)
     sheet_id = st.secrets["sheet_id"]
-    sheet = client.open_by_key(sheet_id).sheet1
+    # ✅ Línea correcta (lee la pestaña que tú quieres)
+    sheet = client.open_by_key(SHEET_ID).worksheet("Pronosticos")
     return sheet
 
 # ---------- FUNCIÓN PARA CALCULAR PUNTAJE ----------
