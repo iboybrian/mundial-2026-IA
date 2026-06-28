@@ -5,6 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import time
 import json
+import streamlit.components.v1 as components
 
 # ---------- CONFIGURACIÓN DE PÁGINA ----------
 st.set_page_config(
@@ -27,52 +28,112 @@ st.markdown("""
 # ---------- ESTILOS CSS ----------
 st.markdown("""
     <style>
-    /* Background with subtle gradient */
-    .stApp { 
-        background: radial-gradient(circle at top, #1a1a2e, #0e1117); 
-        background-attachment: fixed;
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+    /* === CUSTOM PROPERTIES === */
+    :root {
+        --bg-deep: #0A0E17;
+        --bg-elevated: #121928;
+        --surface: #1B2540;
+        --accent-gold: #E8B84B;
+        --accent-amber: #D4943A;
+        --text-primary: #F0F2F5;
+        --text-secondary: #7B889C;
+        --claude: #E07A4B;
+        --gemini: #4A90D9;
+        --chatgpt: #5BB87D;
+        --deepseek: #8B6EC7;
     }
-    
-    /* Glassmorphism Bracket Cards */
-    .bracket-card {
-        background: rgba(30, 35, 48, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 16px;
-        padding: 20px;
+
+    /* === BASE === */
+    .stApp {
+        background: linear-gradient(180deg, #0A0E17 0%, #0F1520 40%, #0A0E17 100%) !important;
+        background-attachment: fixed !important;
+        font-family: 'IBM Plex Sans', sans-serif !important;
+        color: var(--text-primary);
+    }
+
+    /* Clean up Streamlit chrome */
+    header[data-testid="stHeader"] { background: transparent !important; }
+    .stApp > footer { visibility: hidden; }
+    hr { border-color: rgba(255, 255, 255, 0.06) !important; margin: 40px 0 !important; }
+
+    /* Override Streamlit heading fonts in main area */
+    .main h1, .main h2, .main h3 {
+        font-family: 'Rajdhani', sans-serif !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Logo glow */
+    [data-testid="stImage"] img {
+        filter: drop-shadow(0 0 35px rgba(232, 184, 75, 0.12));
+    }
+
+    /* === HERO === */
+    .hero-title {
+        font-family: 'Rajdhani', sans-serif !important;
         text-align: center;
-        margin: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .bracket-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-    }
-    .bracket-card img {
-        width: 80px;
-        height: 80px;
-        object-fit: contain;
-    }
-    .bracket-card p {
-        color: white;
+        background: linear-gradient(135deg, #E8B84B 0%, #D4943A 50%, #E8B84B 100%);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         font-weight: 700;
-        margin-top: 15px;
-        font-size: 1.1em;
-        text-transform: uppercase;
+        font-size: 3em;
+        line-height: 1.1;
+        margin-bottom: 0;
+        letter-spacing: -0.02em;
+        animation: shimmer-gold 4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer-gold {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .rules-ticker {
+        background: var(--bg-elevated);
+        border-left: 4px solid var(--accent-gold);
+        border-radius: 0 12px 12px 0;
+        padding: 20px 24px;
+        max-width: 700px;
+        margin: 0 auto 40px auto;
+        font-family: 'IBM Plex Sans', sans-serif;
+        color: var(--text-secondary);
+        line-height: 1.9;
+    }
+
+    .rules-ticker .rules-title {
+        color: var(--text-primary);
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1.3em;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 8px;
         letter-spacing: 1px;
     }
-    
-    /* Copa Center Card */
-    .copa-card {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
+
+    .rules-ticker .pts-value {
+        color: var(--accent-gold);
+        font-family: 'Oswald', sans-serif;
+        font-weight: 600;
+        font-size: 1.05em;
     }
-    
-    /* Bracket Grid Layout (2x2 for LLMs with FIFA logo in center/top) */
+
+    /* === SECTION HEADERS === */
+    .section-header {
+        font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 2em !important;
+        color: var(--text-primary) !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding-left: 16px;
+        border-left: 4px solid var(--accent-gold);
+        margin-bottom: 8px;
+        -webkit-text-fill-color: initial;
+    }
+
+    /* === BRACKET GRID === */
     .bracket-grid {
         display: grid;
         grid-template-columns: 1fr 1.8fr 1fr;
@@ -84,127 +145,235 @@ st.markdown("""
     }
     .bracket-grid > .llm-card-1 { grid-column: 1; grid-row: 1; }
     .bracket-grid > .llm-card-2 { grid-column: 3; grid-row: 1; }
-    .bracket-grid > .fifa-container { 
-        grid-column: 2; 
-        grid-row: 1 / span 2; 
-        text-align: center; 
+    .bracket-grid > .fifa-container {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        text-align: center;
         display: flex;
         justify-content: center;
         align-items: center;
     }
     .bracket-grid > .llm-card-3 { grid-column: 1; grid-row: 2; }
     .bracket-grid > .llm-card-4 { grid-column: 3; grid-row: 2; }
-    
+
+    .bracket-card {
+        background: var(--bg-elevated);
+        border-radius: 16px;
+        padding: 24px 20px;
+        text-align: center;
+        margin: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 3px solid var(--text-secondary);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+        opacity: 0;
+        animation: card-enter 0.5s ease-out forwards;
+    }
+
+    /* IA-specific bottom border colors */
+    .bracket-card.ia-claude { border-bottom-color: var(--claude); }
+    .bracket-card.ia-gemini { border-bottom-color: var(--gemini); }
+    .bracket-card.ia-chatgpt { border-bottom-color: var(--chatgpt); }
+    .bracket-card.ia-deepseek { border-bottom-color: var(--deepseek); }
+
+    /* IA-specific hover glow */
+    .bracket-card.ia-claude:hover { box-shadow: 0 8px 35px rgba(224, 122, 75, 0.3); }
+    .bracket-card.ia-gemini:hover { box-shadow: 0 8px 35px rgba(74, 144, 217, 0.3); }
+    .bracket-card.ia-chatgpt:hover { box-shadow: 0 8px 35px rgba(91, 184, 125, 0.3); }
+    .bracket-card.ia-deepseek:hover { box-shadow: 0 8px 35px rgba(139, 110, 199, 0.3); }
+
+    .bracket-card:hover {
+        transform: translateY(-6px) scale(1.03);
+    }
+
+    /* Staggered entry for bracket cards */
+    .llm-card-1 { animation-delay: 0.1s; }
+    .llm-card-2 { animation-delay: 0.2s; }
+    .llm-card-3 { animation-delay: 0.3s; }
+    .llm-card-4 { animation-delay: 0.4s; }
+
+    @keyframes card-enter {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bracket-card img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+    .bracket-card p {
+        color: var(--text-primary);
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        margin-top: 15px;
+        font-size: 1.15em;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    /* Copa center card — transparent, no border */
+    .copa-card {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
     .fifa-container img {
         width: 250px !important;
         height: 250px !important;
         object-fit: contain;
-        filter: drop-shadow(0 0 35px rgba(255, 255, 255, 0.25));
-        transition: transform 0.3s ease;
+        filter: drop-shadow(0 0 40px rgba(232, 184, 75, 0.15));
+        transition: transform 0.3s ease-out;
     }
-    .fifa-container img:hover {
-        transform: scale(1.08);
-    }
-    
-    /* Responsive Queries */
-    @media (max-width: 768px) {
-        .bracket-grid {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto auto;
-            gap: 15px;
-        }
-        .bracket-grid > .llm-card-1 { grid-column: 1; grid-row: 1; }
-        .bracket-grid > .llm-card-2 { grid-column: 2; grid-row: 1; }
-        .bracket-grid > .fifa-container { grid-column: 1 / span 2; grid-row: 2; }
-        .bracket-grid > .llm-card-3 { grid-column: 1; grid-row: 3; }
-        .bracket-grid > .llm-card-4 { grid-column: 2; grid-row: 3; }
-        
-        .fifa-container img {
-            width: 200px !important;
-            height: 200px !important;
-        }
-        .ai-badge { width: 45% !important; margin-bottom: 10px; }
-        .hero-title { font-size: 2em !important; }
-        .bracket-card img { width: 60px !important; height: 60px !important; }
-    }
-    
-    /* Match Result Cards */
+    .fifa-container img:hover { transform: scale(1.08); }
+
+    /* === MATCH CARDS === */
     .match-card {
-        background: rgba(30, 35, 48, 0.6);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: var(--bg-elevated);
         border-radius: 16px;
-        padding: 25px;
-        margin-bottom: 25px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease;
+        padding: 28px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+        opacity: 0;
+        animation: card-enter 0.4s ease-out forwards;
     }
     .match-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-    }
-    
-    /* Individual AI Prediction Badge inside Match Card */
-    .ai-badge {
-        text-align: center; 
-        background: rgba(0, 0, 0, 0.3); 
-        padding: 15px; 
-        border-radius: 12px; 
-        width: 23%;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        transition: transform 0.2s, background 0.2s;
-    }
-    .ai-badge:hover {
-        transform: scale(1.05);
-        background: rgba(0, 0, 0, 0.5);
-        border-color: rgba(255,255,255,0.2);
-    }
-    
-    /* Hero Title Gradient */
-    .hero-title {
-        text-align: center;
-        background: linear-gradient(90deg, #FFD700, #FDB931, #FFD700);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: 900;
-        font-size: 3.5em;
-        margin-bottom: 0px;
-        text-shadow: 0px 4px 15px rgba(255, 215, 0, 0.2);
-    }
-    .hero-subtitle {
-        text-align: center;
-        color: #a0aec0;
-        font-size: 1.3em;
-        margin-top: 10px;
-        margin-bottom: 40px;
-        font-weight: 300;
+        transform: translateY(-4px);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* Back to Top Button */
+    .match-score-line {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: 2.2em;
+        text-align: center;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+        letter-spacing: 1px;
+    }
+
+    .match-date {
+        text-align: center;
+        color: var(--text-secondary);
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-size: 0.9em;
+        margin-bottom: 24px;
+    }
+
+    .match-predictions {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* AI Prediction badges inside match cards */
+    .ai-badge {
+        text-align: center;
+        background: rgba(0, 0, 0, 0.25);
+        padding: 16px 12px;
+        border-radius: 12px;
+        width: 23%;
+        min-width: 120px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        transition: transform 0.2s ease-out, background 0.2s ease-out, box-shadow 0.2s ease-out;
+    }
+    .ai-badge:hover {
+        transform: scale(1.04);
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    /* IA-specific hover glow on badges */
+    .ai-badge.ia-claude:hover { box-shadow: 0 4px 20px rgba(224, 122, 75, 0.2); }
+    .ai-badge.ia-gemini:hover { box-shadow: 0 4px 20px rgba(74, 144, 217, 0.2); }
+    .ai-badge.ia-chatgpt:hover { box-shadow: 0 4px 20px rgba(91, 184, 125, 0.2); }
+    .ai-badge.ia-deepseek:hover { box-shadow: 0 4px 20px rgba(139, 110, 199, 0.2); }
+
+    .ai-badge-name {
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        font-size: 1.15em;
+        margin-bottom: 8px;
+    }
+
+    .ai-badge-score {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 600;
+        font-size: 1.5em;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Points badge variants */
+    .pts-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-family: 'Oswald', sans-serif;
+        font-weight: 600;
+        font-size: 0.95em;
+        letter-spacing: 0.5px;
+    }
+
+    .pts-badge.pts-5 {
+        background: linear-gradient(135deg, rgba(232, 184, 75, 0.25), rgba(212, 148, 58, 0.15));
+        color: var(--accent-gold);
+        border: 1px solid rgba(232, 184, 75, 0.3);
+        animation: celebration-pulse 0.6s ease-out 0.8s both;
+    }
+    .pts-badge.pts-3 {
+        background: rgba(212, 148, 58, 0.12);
+        color: var(--accent-amber);
+        border: 1px solid rgba(212, 148, 58, 0.2);
+    }
+    .pts-badge.pts-2 {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-secondary);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .pts-badge.pts-0 {
+        background: transparent;
+        color: rgba(123, 136, 156, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        opacity: 0.6;
+    }
+
+    @keyframes celebration-pulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232, 184, 75, 0.4); }
+        50% { transform: scale(1.15); box-shadow: 0 0 20px 4px rgba(232, 184, 75, 0.2); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232, 184, 75, 0); }
+    }
+
+    /* === BACK TO TOP === */
     .btn-top {
         position: fixed;
         bottom: 30px;
         right: 30px;
-        background: linear-gradient(135deg, #4D4B96, #8E75B2);
-        color: white !important;
-        padding: 12px 25px;
+        background: linear-gradient(135deg, var(--surface), var(--bg-elevated));
+        color: var(--accent-gold) !important;
+        padding: 12px 24px;
         border-radius: 30px;
         text-decoration: none;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         z-index: 1000;
-        transition: all 0.3s;
-        border: 1px solid rgba(255,255,255,0.2);
+        transition: all 0.25s ease-out;
+        border: 1px solid rgba(232, 184, 75, 0.2);
     }
     .btn-top:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
         text-decoration: none;
-        border-color: rgba(255,255,255,0.5);
+        border-color: rgba(232, 184, 75, 0.5);
     }
-    
+
     .footer {
         position: fixed;
         bottom: 0;
@@ -217,6 +386,37 @@ st.markdown("""
         background: transparent;
     }
     .footer:hover { opacity: 0.3; }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+        .bracket-grid {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 15px;
+        }
+        .bracket-grid > .llm-card-1 { grid-column: 1; grid-row: 1; }
+        .bracket-grid > .llm-card-2 { grid-column: 2; grid-row: 1; }
+        .bracket-grid > .fifa-container { grid-column: 1 / span 2; grid-row: 2; }
+        .bracket-grid > .llm-card-3 { grid-column: 1; grid-row: 3; }
+        .bracket-grid > .llm-card-4 { grid-column: 2; grid-row: 3; }
+
+        .fifa-container img { width: 200px !important; height: 200px !important; }
+        .ai-badge { width: 45% !important; margin-bottom: 10px; }
+        .hero-title { font-size: 2em !important; }
+        .bracket-card img { width: 60px !important; height: 60px !important; }
+        .match-score-line { font-size: 1.6em; }
+        .section-header { font-size: 1.5em !important; }
+    }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-delay: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+        .bracket-card, .match-card { opacity: 1 !important; }
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -296,24 +496,25 @@ def calcular_puntaje(local_real, visit_real, local_pred, visit_pred):
         return 2
     else:
         return 0
+
 # ---------- LOGO Y CABECERA ----------
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("logo.png", use_container_width=True)
     st.markdown("""
-        <h1 class='hero-title' style='font-size: 2.5em; line-height: 1.2; margin-bottom: 30px;'>Las IA compiten para ver quien es mejor prediciendo los partidos del mundial 2026</h1>
-        <div style="text-align: center; color: #a0aec0; font-size: 1.1em; max-width: 800px; margin: 0 auto 40px auto; line-height: 1.6; background: rgba(30, 35, 48, 0.6); padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
-            <strong style="color: white; font-size: 1.2em;">Reglas de puntuación:</strong><br>
-            🎯 Por acierto de marcador suman <strong style="color: #FFD700;">5 puntos</strong><br>
-            ✅ Por acierto de ganador y diferencia de goles suman <strong style="color: #FFD700;">3 puntos</strong><br>
-            ✔️ Por acierto de ganador <strong style="color: #FFD700;">2 puntos</strong><br>
-            ❌ Todo lo demas es <strong style="color: #FFD700;">0 puntos</strong><br>
-            <em style="display: block; margin-top: 10px; color: white;">¡Que ruede el balón y veamos quién será la mejor analizadora!</em>
+        <h1 class='hero-title' style='font-size: 2.5em; line-height: 1.2; margin-bottom: 30px;'>Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026</h1>
+        <div class="rules-ticker">
+            <strong class="rules-title">REGLAS DE PUNTUACIÓN</strong>
+            🎯 Por acierto de marcador exacto suman <span class="pts-value">5 puntos</span><br>
+            ✅ Por acertar ganador y diferencia de goles suman <span class="pts-value">3 puntos</span><br>
+            ✔️ Por acertar solo el ganador suman <span class="pts-value">2 puntos</span><br>
+            ❌ Todo lo demás es <span class="pts-value">0 puntos</span><br>
+            <em style="display: block; margin-top: 10px; color: #F0F2F5;">¡Que ruede el balón y veamos quién será la mejor analizadora!</em>
         </div>
     """, unsafe_allow_html=True)
 
 # ---------- BRACKET DE IAS ----------
-st.markdown("## 🤖 ¿Quién será el mejor pronosticador?")
+st.markdown("<h2 class='section-header'>🤖 ¿Quién será el mejor pronosticador?</h2>", unsafe_allow_html=True)
 
 ias = {
     "Claude": "https://cdn.simpleicons.org/claude/D97757",
@@ -333,22 +534,22 @@ except Exception:
 
 st.markdown(f"""
 <div class="bracket-grid">
-    <div class="bracket-card llm-card-1">
+    <div class="bracket-card llm-card-1 ia-claude">
         <img src="{ias['Claude']}" alt="Claude">
         <p>Claude</p>
     </div>
-    <div class="bracket-card llm-card-2">
+    <div class="bracket-card llm-card-2 ia-gemini">
         <img src="{ias['Gemini']}" alt="Gemini">
         <p>Gemini</p>
     </div>
     <div class="fifa-container">
         <img src="{logo_url}" alt="FIFA 2026">
     </div>
-    <div class="bracket-card llm-card-3">
+    <div class="bracket-card llm-card-3 ia-deepseek">
         <img src="{ias['DeepSeek']}" alt="DeepSeek">
         <p>DeepSeek</p>
     </div>
-    <div class="bracket-card llm-card-4">
+    <div class="bracket-card llm-card-4 ia-chatgpt">
         <img src="{ias['ChatGPT']}" alt="ChatGPT">
         <p>ChatGPT</p>
     </div>
@@ -363,7 +564,7 @@ if not df.empty:
     df_procesado = procesar_puntuaciones(df)
     
     # Mostrar tabla principal
-    st.markdown("<h2 style='color: white; font-weight: 800; font-size: 2.2em; margin-bottom: 20px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);'>Tabla de posiciones al momento</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='section-header'>🏆 Tabla de Posiciones</h2>", unsafe_allow_html=True)
     
     # Crear tabla de resumen (totales por IA)
     resumen = pd.DataFrame({
@@ -376,74 +577,265 @@ if not df.empty:
         ]
     }).sort_values("Puntaje", ascending=False).reset_index(drop=True)
     
-    # Mostrar tabla de posiciones ocultando el índice (HTML personalizado con iconos y números grandes)
-    leaderboard_html = f"""
-<div style="background: rgba(30, 35, 48, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.08); max-width: 600px; margin: 20px auto 40px auto; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);">
-<table style="width: 100%; border-collapse: collapse; color: white;">
-<thead>
-<tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); text-align: left;">
-<th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">Posición</th>
-<th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em;">IA</th>
-<th style="padding: 12px; color: #a0aec0; font-weight: 600; font-size: 1.1em; text-align: right;">Puntaje</th>
-</tr>
-</thead>
-<tbody>
-"""
+    # ---------- SCOREBOARD (ELEMENTO FIRMA) via components.html ----------
+    ia_colors = {"Claude": "#E07A4B", "DeepSeek": "#8B6EC7", "Gemini": "#4A90D9", "ChatGPT": "#5BB87D"}
+    max_score = max(int(resumen['Puntaje'].max()), 1)
+    
+    # Build scoreboard rows
+    sb_rows = ""
     for index, row in resumen.iterrows():
         name = row['IA']
-        score = row['Puntaje']
+        score = int(row['Puntaje'])
         icon_url = ias.get(name, "")
-        medal = "🥇" if index == 0 else "🥈" if index == 1 else "🥉" if index == 2 else "🏅"
+        color = ia_colors.get(name, "#7B889C")
+        pct = round((score / max_score) * 100)
+        leader = "leader" if index == 0 else ""
+        medal = "🥇" if index == 0 else ("🥈" if index == 1 else ("🥉" if index == 2 else ""))
         
-        leaderboard_html += f"""
-<tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s;">
-<td style="padding: 15px 12px; font-weight: bold; font-size: 1.3em;">{medal} {index + 1}</td>
-<td style="padding: 15px 12px; display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2em;">
-<img src="{icon_url}" style="width: 28px; height: 28px; object-fit: contain; background: white; border-radius: 50%; padding: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);" alt="{name}">
-<span>{name}</span>
-</td>
-<td style="padding: 15px 12px; text-align: right; font-weight: 900; font-size: 2.2em; color: #FFD700; text-shadow: 0 2px 5px rgba(0,0,0,0.5);">{score}</td>
-</tr>
-"""
-    leaderboard_html += """
-</tbody>
-</table>
-</div>
-"""
-    st.markdown(leaderboard_html, unsafe_allow_html=True)
+        sb_rows += f'''
+        <div class="sb-row {leader}">
+            <div class="sb-pos">
+                <span class="sb-medal">{medal}</span> {index + 1}
+            </div>
+            <div class="sb-info">
+                <div class="sb-name-row">
+                    <img class="sb-icon" src="{icon_url}" alt="{name}">
+                    <span class="sb-name">{name}</span>
+                </div>
+                <div class="sb-progress">
+                    <div class="sb-fill" data-width="{pct}%" style="background: linear-gradient(90deg, {color}, {color}aa);"></div>
+                </div>
+            </div>
+            <div class="sb-score" data-target="{score}">0</div>
+        </div>
+        '''
     
-    # Mostrar detalle de partidos agrupado
-    st.markdown("<h2 style='color: white; font-weight: 800; font-size: 2.2em; margin-top: 40px; margin-bottom: 20px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);'>Resultados y Predicciones por Partido</h2>", unsafe_allow_html=True)
+    # Scoreboard CSS (regular string — no f-string to avoid { } escaping)
+    sb_css = """
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+        margin: 0;
+        padding: 4px 0;
+        background: transparent;
+        overflow: hidden;
+        font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    .sb-container {
+        background: #121928;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .sb-header {
+        background: linear-gradient(135deg, #E8B84B 0%, #D4943A 100%);
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sb-header-icon { font-size: 1.4em; }
+
+    .sb-header-text {
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        font-size: 1.3em;
+        color: #0A0E17;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .sb-row {
+        display: grid;
+        grid-template-columns: 55px 1fr 90px;
+        align-items: center;
+        padding: 16px 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        transition: background 0.3s ease;
+    }
+    .sb-row:last-child { border-bottom: none; }
+
+    .sb-row.leader {
+        background: linear-gradient(90deg, rgba(232, 184, 75, 0.1) 0%, transparent 70%);
+        border-left: 4px solid #E8B84B;
+        padding-left: 20px;
+    }
+
+    .sb-pos {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: 1.4em;
+        color: #7B889C;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .sb-row.leader .sb-pos { color: #E8B84B; }
+
+    .sb-medal { font-size: 1.1em; }
+
+    .sb-info { display: flex; flex-direction: column; gap: 8px; }
+
+    .sb-name-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sb-icon {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        border-radius: 50%;
+        padding: 4px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .sb-name {
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 600;
+        font-size: 1.15em;
+        color: #F0F2F5;
+    }
+
+    .sb-progress {
+        width: 100%;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .sb-fill {
+        height: 100%;
+        border-radius: 3px;
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .sb-score {
+        font-family: 'Oswald', sans-serif;
+        font-weight: 700;
+        font-size: 2.4em;
+        text-align: right;
+        color: #F0F2F5;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+    .sb-row.leader .sb-score { color: #E8B84B; }
+
+    @media (max-width: 600px) {
+        .sb-row { grid-template-columns: 40px 1fr 70px; padding: 12px 16px; }
+        .sb-score { font-size: 1.8em; }
+        .sb-header { padding: 12px 16px; }
+        .sb-header-text { font-size: 1.1em; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sb-fill { transition: none; }
+    }
+    """
+    
+    # Scoreboard JS (regular string)
+    sb_js = """
+    function animateCounter(el, target, duration) {
+        const start = performance.now();
+        function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(eased * target);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    setTimeout(function() {
+        document.querySelectorAll('.sb-fill').forEach(function(el) {
+            var targetWidth = el.getAttribute('data-width');
+            if (prefersReducedMotion) { el.style.transition = 'none'; }
+            el.style.width = targetWidth;
+        });
+
+        document.querySelectorAll('.sb-score').forEach(function(el) {
+            var target = parseInt(el.getAttribute('data-target'));
+            if (prefersReducedMotion) {
+                el.textContent = target;
+            } else {
+                animateCounter(el, target, 1500);
+            }
+        });
+    }, 300);
+    """
+    
+    # Assemble scoreboard HTML
+    scoreboard_component = (
+        "<!DOCTYPE html><html><head>"
+        "<link href='https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap' rel='stylesheet'>"
+        "<style>" + sb_css + "</style>"
+        "</head><body>"
+        "<div class='sb-container'>"
+        "<div class='sb-header'>"
+        "<span class='sb-header-icon'>🏆</span>"
+        "<span class='sb-header-text'>Tabla de Posiciones</span>"
+        "</div>"
+        + sb_rows +
+        "</div>"
+        "<script>" + sb_js + "</script>"
+        "</body></html>"
+    )
+    
+    sb_height = len(resumen) * 76 + 68
+    components.html(scoreboard_component, height=sb_height)
+    
+    # ---------- RESULTADOS Y PREDICCIONES POR PARTIDO ----------
+    st.markdown("<h2 class='section-header' style='margin-top: 40px;'>⚽ Resultados y Predicciones</h2>", unsafe_allow_html=True)
+    
+    # Indicator mapping for points
+    _ind = {5: "✅", 3: "🟡", 2: "✔️", 0: "❌"}
     
     for idx, row in df_procesado.iterrows():
         # Tarjeta del partido
         with st.container():
+            # Point values for indicators (presentation only)
+            pc = int(row.get('Pts_Claude', 0))
+            pd_ = int(row.get('Pts_DeepSeek', 0))
+            pg = int(row.get('Pts_Gemini', 0))
+            pch = int(row.get('Pts_ChatGPT', 0))
+            
             st.markdown(f"""
-<div class="match-card">
-<h3 style="text-align: center; color: #ffffff; margin-bottom: 5px; font-size: 1.8em; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+<div class="match-card" style="animation-delay: {min(idx * 0.06, 1.0)}s;">
+<div class="match-score-line">
 {row.get('Local', 'Local')} {row.get('GolesLocal', '-')} : {row.get('GolesVisitante', '-')} {row.get('Visitante', 'Visitante')}
-</h3>
-<p style="text-align: center; color: #a0aec0; font-size: 15px; margin-bottom: 25px;">📅 Fecha: {row.get('Fecha', '')}</p>
-<div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px;">
-<div class="ai-badge">
-<strong style="color: #D97757; font-size: 1.2em;">Claude</strong><br>
-<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('Claude_L', '-')} - {row.get('Claude_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_Claude', 0)} pts</span>
 </div>
-<div class="ai-badge">
-<strong style="color: #4D4B96; font-size: 1.2em;">DeepSeek</strong><br>
-<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('DeepSeek_L', '-')} - {row.get('DeepSeek_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_DeepSeek', 0)} pts</span>
+<div class="match-date">📅 {row.get('Fecha', '')}</div>
+<div class="match-predictions">
+<div class="ai-badge ia-claude">
+<div class="ai-badge-name" style="color: var(--claude);">Claude</div>
+<div class="ai-badge-score">{row.get('Claude_L', '-')} - {row.get('Claude_V', '-')}</div>
+<span class="pts-badge pts-{pc}">{_ind.get(pc, "❌")} +{pc} pts</span>
 </div>
-<div class="ai-badge">
-<strong style="color: #8E75B2; font-size: 1.2em;">Gemini</strong><br>
-<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('Gemini_L', '-')} - {row.get('Gemini_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_Gemini', 0)} pts</span>
+<div class="ai-badge ia-deepseek">
+<div class="ai-badge-name" style="color: var(--deepseek);">DeepSeek</div>
+<div class="ai-badge-score">{row.get('DeepSeek_L', '-')} - {row.get('DeepSeek_V', '-')}</div>
+<span class="pts-badge pts-{pd_}">{_ind.get(pd_, "❌")} +{pd_} pts</span>
 </div>
-<div class="ai-badge">
-<strong style="color: #74aa9c; font-size: 1.2em;">ChatGPT</strong><br>
-<span style="font-size: 22px; color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px #000;">{row.get('ChatGPT_L', '-')} - {row.get('ChatGPT_V', '-')}</span><br>
-<span style="color: #FFD700; font-weight: bold; background: rgba(255,215,0,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-top: 8px;">+{row.get('Pts_ChatGPT', 0)} pts</span>
+<div class="ai-badge ia-gemini">
+<div class="ai-badge-name" style="color: var(--gemini);">Gemini</div>
+<div class="ai-badge-score">{row.get('Gemini_L', '-')} - {row.get('Gemini_V', '-')}</div>
+<span class="pts-badge pts-{pg}">{_ind.get(pg, "❌")} +{pg} pts</span>
+</div>
+<div class="ai-badge ia-chatgpt">
+<div class="ai-badge-name" style="color: var(--chatgpt);">ChatGPT</div>
+<div class="ai-badge-score">{row.get('ChatGPT_L', '-')} - {row.get('ChatGPT_V', '-')}</div>
+<span class="pts-badge pts-{pch}">{_ind.get(pch, "❌")} +{pch} pts</span>
 </div>
 </div>
 </div>
@@ -527,7 +919,7 @@ if st.session_state.show_admin:
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; padding-bottom: 50px;">
-    <p style="color: #8892b0; font-size: 14px;">⚽ Datos actualizados en tiempo real | Desarrollado con Streamlit</p>
+    <p style="color: var(--text-secondary); font-family: 'IBM Plex Sans', sans-serif; font-size: 14px;">⚽ Datos actualizados en tiempo real · Desarrollado con Streamlit</p>
     <a href="#top" target="_self" class="btn-top">⬆️ Regresar Arriba</a>
 </div>
 """, unsafe_allow_html=True)
