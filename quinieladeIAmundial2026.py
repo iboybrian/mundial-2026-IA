@@ -444,15 +444,15 @@ st.markdown("""
         .section-header { font-size: 1.5em !important; }
     }
 
-    /* === SCROLL REVEAL === */
+    /* === SCROLL REVEAL (CSS ONLY FALLBACK) === */
     .reveal-on-scroll {
         opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: fade-in-up 0.8s ease-out forwards;
+        animation-delay: 0.2s;
     }
-    .reveal-on-scroll.revealed {
-        opacity: 1;
-        transform: translateY(0);
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     /* === LIVE INDICATOR === */
@@ -516,39 +516,31 @@ st.markdown("""
         .bracket-card, .match-card, .reveal-on-scroll { opacity: 1 !important; transform: none !important; }
     }
     </style>
-
-    <script>
-    (function() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                }
-            });
-        }, { threshold: 0.05 });
-
-        function setupReveal() {
-            document.querySelectorAll('.reveal-on-scroll').forEach(el => {
-                observer.observe(el);
-            });
-            document.querySelectorAll('.match-card').forEach(card => {
-                card.classList.add('reveal-on-scroll');
-                observer.observe(card);
-            });
-            document.querySelectorAll('iframe').forEach(iframe => {
-                iframe.classList.add('reveal-on-scroll');
-                observer.observe(iframe);
-            });
-        }
-        
-        if (window.revealIntervalId) {
-            clearInterval(window.revealIntervalId);
-        }
-        window.revealIntervalId = setInterval(setupReveal, 1000);
-        setTimeout(setupReveal, 300);
-    })();
-    </script>
 """)
+
+# Hack to execute javascript in Streamlit without iframe boundaries
+components.html("""
+<script>
+    const parentDoc = window.parent.document;
+    
+    // Fallback if IntersectionObserver isn't needed (we are using CSS animations now)
+    // But we still apply the typewriter effect!
+    const typeEl = parentDoc.getElementById("typewriter-text");
+    if (typeEl && !typeEl.dataset.started) {
+        typeEl.dataset.started = "true";
+        const text = "Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026";
+        let i = 0;
+        function typeWriter() {
+            if (i < text.length) {
+                typeEl.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 40);
+            }
+        }
+        setTimeout(typeWriter, 400);
+    }
+</script>
+""", height=0, width=0)
 # ---------- FUNCIÓN PARA CONECTAR A GOOGLE SHEETS ----------
 def conectar_sheets():
     # Usar los secretos de Streamlit Cloud
@@ -634,25 +626,6 @@ with col2:
         <h1 class='hero-title' style='font-size: 2.5em; line-height: 1.2; margin-bottom: 30px;'>
             <span id="typewriter-text"></span><span class="typewriter-cursor">|</span>
         </h1>
-        <script>
-            (function() {
-                const text = "Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026";
-                let i = 0;
-                const speed = 40;
-                const delayStart = 400;
-                const el = document.getElementById("typewriter-text");
-                if (!el) return;
-                
-                function typeWriter() {
-                    if (i < text.length) {
-                        el.textContent += text.charAt(i);
-                        i++;
-                        setTimeout(typeWriter, speed);
-                    }
-                }
-                setTimeout(typeWriter, delayStart);
-            })();
-        </script>
     """, unsafe_allow_html=True)
 
 # ---------- BRACKET DE IAS (INVERTIDO - AHORA ARRIBA DE LAS REGLAS) ----------
