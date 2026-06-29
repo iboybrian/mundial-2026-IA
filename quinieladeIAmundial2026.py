@@ -25,12 +25,11 @@ st.markdown("""
     </audio>
 """, unsafe_allow_html=True)
 
-# ---------- ESTILOS CSS ----------
+# ---------- ESTILOS CSS BLOQUE 1: Base, Hero, Tipografía ----------
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 
-    /* === CUSTOM PROPERTIES (OPCIÓN C: MIDNIGHT SLATE) === */
     :root {
         --bg-deep: #0E1117;
         --bg-elevated: #161B22;
@@ -45,7 +44,6 @@ st.markdown("""
         --deepseek: #8B6EC7;
     }
 
-    /* === BASE === */
     .stApp {
         background: linear-gradient(180deg, #0E1117 0%, #161B22 50%, #0E1117 100%) !important;
         background-attachment: fixed !important;
@@ -53,29 +51,24 @@ st.markdown("""
         color: var(--text-primary);
     }
 
-    /* Clean up Streamlit chrome */
     header[data-testid="stHeader"] { background: transparent !important; }
     .stApp > footer { visibility: hidden; }
     hr { border-color: rgba(255, 255, 255, 0.06) !important; margin: 40px 0 !important; }
 
-    /* Override Streamlit heading fonts in main area */
     .main h1, .main h2, .main h3 {
         font-family: 'Rajdhani', sans-serif !important;
         color: var(--text-primary) !important;
     }
 
-    /* Logo glow and fade-in */
     [data-testid="stImage"] img {
         filter: drop-shadow(0 0 35px rgba(223, 183, 108, 0.12));
         animation: logo-fade-in 1.2s ease-out forwards;
     }
-
     @keyframes logo-fade-in {
         from { opacity: 0; transform: scale(0.95); }
         to { opacity: 1; transform: scale(1); }
     }
 
-    /* === HERO === */
     .hero-title {
         font-family: 'Rajdhani', sans-serif !important;
         text-align: center;
@@ -90,45 +83,11 @@ st.markdown("""
         letter-spacing: -0.02em;
         animation: shimmer-gold 4s ease-in-out infinite;
     }
-
     @keyframes shimmer-gold {
         0%, 100% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
     }
 
-    .rules-ticker {
-        background: var(--bg-elevated);
-        border-left: 4px solid var(--accent-gold);
-        border-radius: 0 12px 12px 0;
-        padding: 20px 24px;
-        max-width: 700px;
-        margin: 40px auto;
-        font-family: 'IBM Plex Sans', sans-serif;
-        color: var(--text-secondary);
-        line-height: 1.9;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        border-left: 4px solid var(--accent-gold);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .rules-ticker .rules-title {
-        color: var(--text-primary);
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 1.3em;
-        font-weight: 700;
-        display: block;
-        margin-bottom: 8px;
-        letter-spacing: 1px;
-    }
-
-    .rules-ticker .pts-value {
-        color: var(--accent-gold);
-        font-family: 'Oswald', sans-serif;
-        font-weight: 600;
-        font-size: 1.05em;
-    }
-
-    /* Typewriter Cursor */
     .typewriter-cursor {
         display: inline-block;
         color: var(--accent-gold);
@@ -141,7 +100,6 @@ st.markdown("""
         50% { opacity: 1; }
     }
 
-    /* === SECTION HEADERS === */
     .section-header {
         font-family: 'Rajdhani', sans-serif !important;
         font-weight: 700 !important;
@@ -166,7 +124,41 @@ st.markdown("""
         margin-bottom: 15px;
     }
 
-    /* === BRACKET GRID === */
+    .rules-ticker {
+        background: var(--bg-elevated);
+        border-left: 4px solid var(--accent-gold);
+        border-radius: 0 12px 12px 0;
+        padding: 20px 24px;
+        max-width: 700px;
+        margin: 40px auto;
+        font-family: 'IBM Plex Sans', sans-serif;
+        color: var(--text-secondary);
+        line-height: 1.9;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-left: 4px solid var(--accent-gold);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    .rules-ticker .rules-title {
+        color: var(--text-primary);
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1.3em;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 8px;
+        letter-spacing: 1px;
+    }
+    .rules-ticker .pts-value {
+        color: var(--accent-gold);
+        font-family: 'Oswald', sans-serif;
+        font-weight: 600;
+        font-size: 1.05em;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ---------- ESTILOS CSS BLOQUE 2: Grid, Cards, Badges ----------
+st.markdown("""
+    <style>
     .bracket-grid {
         display: grid;
         grid-template-columns: 1fr 1.8fr 1fr;
@@ -202,24 +194,18 @@ st.markdown("""
         opacity: 0;
         animation: fade-in-fast 0.6s ease-out forwards;
     }
-
-    /* IA-specific bottom border colors */
     .bracket-card.ia-claude { border-bottom-color: var(--claude); }
     .bracket-card.ia-gemini { border-bottom-color: var(--gemini); }
     .bracket-card.ia-chatgpt { border-bottom-color: var(--chatgpt); }
     .bracket-card.ia-deepseek { border-bottom-color: var(--deepseek); }
 
-    /* IA-specific hover glow */
     .bracket-card.ia-claude:hover { box-shadow: 0 8px 35px rgba(224, 122, 75, 0.25); }
     .bracket-card.ia-gemini:hover { box-shadow: 0 8px 35px rgba(74, 144, 217, 0.25); }
     .bracket-card.ia-chatgpt:hover { box-shadow: 0 8px 35px rgba(91, 184, 125, 0.25); }
     .bracket-card.ia-deepseek:hover { box-shadow: 0 8px 35px rgba(139, 110, 199, 0.25); }
 
-    .bracket-card:hover {
-        transform: translateY(-6px) scale(1.03);
-    }
+    .bracket-card:hover { transform: translateY(-6px) scale(1.03); }
 
-    /* Staggered entry for bracket cards starting after FIFA logo */
     .fifa-container {
         opacity: 0;
         animation: fade-in-fast 0.6s ease-out forwards;
@@ -236,8 +222,10 @@ st.markdown("""
     }
 
     .bracket-card img {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
+        max-width: 60px;
+        max-height: 60px;
         object-fit: contain;
     }
     .bracket-card p {
@@ -250,7 +238,6 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* Copa center card — transparent, no border */
     .copa-card {
         background: transparent !important;
         border: none !important;
@@ -258,15 +245,19 @@ st.markdown("""
     }
 
     .fifa-container img {
-        width: 250px !important;
-        height: 250px !important;
+        width: 220px !important;
+        height: 220px !important;
         object-fit: contain;
         filter: drop-shadow(0 0 40px rgba(223, 183, 108, 0.15));
         transition: transform 0.3s ease-out;
     }
     .fifa-container img:hover { transform: scale(1.08); }
+    </style>
+""", unsafe_allow_html=True)
 
-    /* === MATCH CARDS === */
+# ---------- ESTILOS CSS BLOQUE 3: Match Cards, Buttons, Responsive, Animations ----------
+st.markdown("""
+    <style>
     .match-card {
         background: var(--bg-elevated);
         border-radius: 16px;
@@ -275,6 +266,8 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.06);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+        opacity: 0;
+        animation: fade-in-up 0.8s ease-out forwards;
     }
     .match-card:hover {
         transform: translateY(-4px);
@@ -291,7 +284,6 @@ st.markdown("""
         margin-bottom: 4px;
         letter-spacing: 1px;
     }
-
     .match-date {
         text-align: center;
         color: var(--text-secondary);
@@ -299,7 +291,6 @@ st.markdown("""
         font-size: 0.9em;
         margin-bottom: 24px;
     }
-
     .match-predictions {
         display: flex;
         justify-content: space-around;
@@ -307,7 +298,6 @@ st.markdown("""
         gap: 10px;
     }
 
-    /* AI Prediction badges inside match cards */
     .ai-badge {
         text-align: center;
         background: rgba(0, 0, 0, 0.25);
@@ -318,12 +308,7 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.04);
         transition: transform 0.2s ease-out, background 0.2s ease-out, box-shadow 0.2s ease-out;
     }
-    .ai-badge:hover {
-        transform: scale(1.04);
-        background: rgba(0, 0, 0, 0.4);
-    }
-
-    /* IA-specific hover glow on badges */
+    .ai-badge:hover { transform: scale(1.04); background: rgba(0, 0, 0, 0.4); }
     .ai-badge.ia-claude:hover { box-shadow: 0 4px 20px rgba(224, 122, 75, 0.2); }
     .ai-badge.ia-gemini:hover { box-shadow: 0 4px 20px rgba(74, 144, 217, 0.2); }
     .ai-badge.ia-chatgpt:hover { box-shadow: 0 4px 20px rgba(91, 184, 125, 0.2); }
@@ -335,7 +320,6 @@ st.markdown("""
         font-size: 1.15em;
         margin-bottom: 8px;
     }
-
     .ai-badge-score {
         font-family: 'Oswald', sans-serif;
         font-weight: 600;
@@ -345,7 +329,6 @@ st.markdown("""
         letter-spacing: 0.5px;
     }
 
-    /* Points badge variants */
     .pts-badge {
         display: inline-block;
         padding: 4px 12px;
@@ -355,7 +338,6 @@ st.markdown("""
         font-size: 0.95em;
         letter-spacing: 0.5px;
     }
-
     .pts-badge.pts-5 {
         background: linear-gradient(135deg, rgba(223, 183, 108, 0.25), rgba(201, 154, 73, 0.15));
         color: var(--accent-gold);
@@ -378,14 +360,12 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.04);
         opacity: 0.6;
     }
-
     @keyframes celebration-pulse {
         0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(223, 183, 108, 0.4); }
         50% { transform: scale(1.15); box-shadow: 0 0 20px 4px rgba(223, 183, 108, 0.2); }
         100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(223, 183, 108, 0); }
     }
 
-    /* === BACK TO TOP === */
     .btn-top {
         position: fixed;
         bottom: 30px;
@@ -423,39 +403,6 @@ st.markdown("""
     }
     .footer:hover { opacity: 0.3; }
 
-    /* === RESPONSIVE === */
-    @media (max-width: 768px) {
-        .bracket-grid {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto auto;
-            gap: 15px;
-        }
-        .bracket-grid > .llm-card-1 { grid-column: 1; grid-row: 1; }
-        .bracket-grid > .llm-card-2 { grid-column: 2; grid-row: 1; }
-        .bracket-grid > .fifa-container { grid-column: 1 / span 2; grid-row: 2; }
-        .bracket-grid > .llm-card-3 { grid-column: 1; grid-row: 3; }
-        .bracket-grid > .llm-card-4 { grid-column: 2; grid-row: 3; }
-
-        .fifa-container img { width: 200px !important; height: 200px !important; }
-        .ai-badge { width: 45% !important; margin-bottom: 10px; }
-        .hero-title { font-size: 2em !important; }
-        .bracket-card img { width: 60px !important; height: 60px !important; }
-        .match-score-line { font-size: 1.6em; }
-        .section-header { font-size: 1.5em !important; }
-    }
-
-    /* === SCROLL REVEAL (CSS ONLY FALLBACK) === */
-    .reveal-on-scroll {
-        opacity: 0;
-        animation: fade-in-up 0.8s ease-out forwards;
-        animation-delay: 0.2s;
-    }
-    @keyframes fade-in-up {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* === LIVE INDICATOR === */
     .today-header {
         display: flex;
         align-items: center;
@@ -476,18 +423,9 @@ st.markdown("""
         display: inline-block;
     }
     @keyframes live-pulse {
-        0% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
-        }
-        70% {
-            transform: scale(1);
-            box-shadow: 0 0 0 6px rgba(255, 59, 48, 0);
-        }
-        100% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(255, 59, 48, 0);
-        }
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 59, 48, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
     }
     .live-text {
         color: #ff4d4d;
@@ -506,7 +444,36 @@ st.markdown("""
         margin-bottom: 30px;
     }
 
-    /* === REDUCED MOTION === */
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal-on-scroll {
+        opacity: 0;
+        animation: fade-in-up 0.8s ease-out forwards;
+        animation-delay: 0.2s;
+    }
+
+    @media (max-width: 768px) {
+        .bracket-grid {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 15px;
+        }
+        .bracket-grid > .llm-card-1 { grid-column: 1; grid-row: 1; }
+        .bracket-grid > .llm-card-2 { grid-column: 2; grid-row: 1; }
+        .bracket-grid > .fifa-container { grid-column: 1 / span 2; grid-row: 2; }
+        .bracket-grid > .llm-card-3 { grid-column: 1; grid-row: 3; }
+        .bracket-grid > .llm-card-4 { grid-column: 2; grid-row: 3; }
+        .fifa-container img { width: 180px !important; height: 180px !important; }
+        .ai-badge { width: 45% !important; margin-bottom: 10px; }
+        .hero-title { font-size: 2em !important; }
+        .bracket-card img { width: 50px !important; height: 50px !important; max-width: 50px !important; max-height: 50px !important; }
+        .match-score-line { font-size: 1.6em; }
+        .section-header { font-size: 1.5em !important; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
             animation-duration: 0.01ms !important;
@@ -516,15 +483,12 @@ st.markdown("""
         .bracket-card, .match-card, .reveal-on-scroll { opacity: 1 !important; transform: none !important; }
     }
     </style>
-""")
+""", unsafe_allow_html=True)
 
-# Hack to execute javascript in Streamlit without iframe boundaries
+# ---------- TYPEWRITER JS via components.html ----------
 components.html("""
 <script>
     const parentDoc = window.parent.document;
-    
-    // Fallback if IntersectionObserver isn't needed (we are using CSS animations now)
-    // But we still apply the typewriter effect!
     const typeEl = parentDoc.getElementById("typewriter-text");
     if (typeEl && !typeEl.dataset.started) {
         typeEl.dataset.started = "true";
@@ -541,6 +505,7 @@ components.html("""
     }
 </script>
 """, height=0, width=0)
+
 # ---------- FUNCIÓN PARA CONECTAR A GOOGLE SHEETS ----------
 def conectar_sheets():
     # Usar los secretos de Streamlit Cloud
