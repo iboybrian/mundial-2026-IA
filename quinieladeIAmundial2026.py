@@ -30,15 +30,15 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 
-    /* === CUSTOM PROPERTIES === */
+    /* === CUSTOM PROPERTIES (OPCIÓN C: MIDNIGHT SLATE) === */
     :root {
-        --bg-deep: #0A0E17;
-        --bg-elevated: #121928;
-        --surface: #1B2540;
-        --accent-gold: #E8B84B;
-        --accent-amber: #D4943A;
+        --bg-deep: #0E1117;
+        --bg-elevated: #161B22;
+        --surface: #1C212B;
+        --accent-gold: #DFB76C;
+        --accent-amber: #C99A49;
         --text-primary: #F0F2F5;
-        --text-secondary: #7B889C;
+        --text-secondary: #8B949E;
         --claude: #E07A4B;
         --gemini: #4A90D9;
         --chatgpt: #5BB87D;
@@ -47,7 +47,7 @@ st.markdown("""
 
     /* === BASE === */
     .stApp {
-        background: linear-gradient(180deg, #0A0E17 0%, #0F1520 40%, #0A0E17 100%) !important;
+        background: linear-gradient(180deg, #0E1117 0%, #161B22 50%, #0E1117 100%) !important;
         background-attachment: fixed !important;
         font-family: 'IBM Plex Sans', sans-serif !important;
         color: var(--text-primary);
@@ -64,16 +64,22 @@ st.markdown("""
         color: var(--text-primary) !important;
     }
 
-    /* Logo glow */
+    /* Logo glow and fade-in */
     [data-testid="stImage"] img {
-        filter: drop-shadow(0 0 35px rgba(232, 184, 75, 0.12));
+        filter: drop-shadow(0 0 35px rgba(223, 183, 108, 0.12));
+        animation: logo-fade-in 1.2s ease-out forwards;
+    }
+
+    @keyframes logo-fade-in {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
     }
 
     /* === HERO === */
     .hero-title {
         font-family: 'Rajdhani', sans-serif !important;
         text-align: center;
-        background: linear-gradient(135deg, #E8B84B 0%, #D4943A 50%, #E8B84B 100%);
+        background: linear-gradient(135deg, #DFB76C 0%, #C99A49 50%, #DFB76C 100%);
         background-size: 200% 200%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -96,10 +102,13 @@ st.markdown("""
         border-radius: 0 12px 12px 0;
         padding: 20px 24px;
         max-width: 700px;
-        margin: 0 auto 40px auto;
+        margin: 40px auto;
         font-family: 'IBM Plex Sans', sans-serif;
         color: var(--text-secondary);
         line-height: 1.9;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-left: 4px solid var(--accent-gold);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
     .rules-ticker .rules-title {
@@ -119,6 +128,19 @@ st.markdown("""
         font-size: 1.05em;
     }
 
+    /* Typewriter Cursor */
+    .typewriter-cursor {
+        display: inline-block;
+        color: var(--accent-gold);
+        font-weight: 700;
+        margin-left: 2px;
+        animation: cursor-blink 0.75s step-end infinite;
+    }
+    @keyframes cursor-blink {
+        from, to { opacity: 0; }
+        50% { opacity: 1; }
+    }
+
     /* === SECTION HEADERS === */
     .section-header {
         font-family: 'Rajdhani', sans-serif !important;
@@ -129,8 +151,19 @@ st.markdown("""
         letter-spacing: 1px;
         padding-left: 16px;
         border-left: 4px solid var(--accent-gold);
-        margin-bottom: 8px;
+        margin-top: 40px;
+        margin-bottom: 24px;
         -webkit-text-fill-color: initial;
+    }
+
+    .section-subheader {
+        font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 1.3em !important;
+        color: var(--text-secondary) !important;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 15px;
     }
 
     /* === BRACKET GRID === */
@@ -167,7 +200,7 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
         opacity: 0;
-        animation: card-enter 0.5s ease-out forwards;
+        animation: fade-in-fast 0.6s ease-out forwards;
     }
 
     /* IA-specific bottom border colors */
@@ -177,24 +210,29 @@ st.markdown("""
     .bracket-card.ia-deepseek { border-bottom-color: var(--deepseek); }
 
     /* IA-specific hover glow */
-    .bracket-card.ia-claude:hover { box-shadow: 0 8px 35px rgba(224, 122, 75, 0.3); }
-    .bracket-card.ia-gemini:hover { box-shadow: 0 8px 35px rgba(74, 144, 217, 0.3); }
-    .bracket-card.ia-chatgpt:hover { box-shadow: 0 8px 35px rgba(91, 184, 125, 0.3); }
-    .bracket-card.ia-deepseek:hover { box-shadow: 0 8px 35px rgba(139, 110, 199, 0.3); }
+    .bracket-card.ia-claude:hover { box-shadow: 0 8px 35px rgba(224, 122, 75, 0.25); }
+    .bracket-card.ia-gemini:hover { box-shadow: 0 8px 35px rgba(74, 144, 217, 0.25); }
+    .bracket-card.ia-chatgpt:hover { box-shadow: 0 8px 35px rgba(91, 184, 125, 0.25); }
+    .bracket-card.ia-deepseek:hover { box-shadow: 0 8px 35px rgba(139, 110, 199, 0.25); }
 
     .bracket-card:hover {
         transform: translateY(-6px) scale(1.03);
     }
 
-    /* Staggered entry for bracket cards */
-    .llm-card-1 { animation-delay: 0.1s; }
-    .llm-card-2 { animation-delay: 0.2s; }
-    .llm-card-3 { animation-delay: 0.3s; }
-    .llm-card-4 { animation-delay: 0.4s; }
+    /* Staggered entry for bracket cards starting after FIFA logo */
+    .fifa-container {
+        opacity: 0;
+        animation: fade-in-fast 0.6s ease-out forwards;
+        animation-delay: 0.1s;
+    }
+    .llm-card-1 { animation-delay: 0.5s; }
+    .llm-card-2 { animation-delay: 0.6s; }
+    .llm-card-3 { animation-delay: 0.7s; }
+    .llm-card-4 { animation-delay: 0.8s; }
 
-    @keyframes card-enter {
-        from { opacity: 0; transform: translateY(24px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes fade-in-fast {
+        from { opacity: 0; transform: scale(0.9) translateY(10px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .bracket-card img {
@@ -223,7 +261,7 @@ st.markdown("""
         width: 250px !important;
         height: 250px !important;
         object-fit: contain;
-        filter: drop-shadow(0 0 40px rgba(232, 184, 75, 0.15));
+        filter: drop-shadow(0 0 40px rgba(223, 183, 108, 0.15));
         transition: transform 0.3s ease-out;
     }
     .fifa-container img:hover { transform: scale(1.08); }
@@ -237,8 +275,6 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.06);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
-        opacity: 0;
-        animation: card-enter 0.4s ease-out forwards;
     }
     .match-card:hover {
         transform: translateY(-4px);
@@ -321,15 +357,15 @@ st.markdown("""
     }
 
     .pts-badge.pts-5 {
-        background: linear-gradient(135deg, rgba(232, 184, 75, 0.25), rgba(212, 148, 58, 0.15));
+        background: linear-gradient(135deg, rgba(223, 183, 108, 0.25), rgba(201, 154, 73, 0.15));
         color: var(--accent-gold);
-        border: 1px solid rgba(232, 184, 75, 0.3);
+        border: 1px solid rgba(223, 183, 108, 0.3);
         animation: celebration-pulse 0.6s ease-out 0.8s both;
     }
     .pts-badge.pts-3 {
-        background: rgba(212, 148, 58, 0.12);
+        background: rgba(201, 154, 73, 0.12);
         color: var(--accent-amber);
-        border: 1px solid rgba(212, 148, 58, 0.2);
+        border: 1px solid rgba(201, 154, 73, 0.2);
     }
     .pts-badge.pts-2 {
         background: rgba(255, 255, 255, 0.06);
@@ -344,9 +380,9 @@ st.markdown("""
     }
 
     @keyframes celebration-pulse {
-        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232, 184, 75, 0.4); }
-        50% { transform: scale(1.15); box-shadow: 0 0 20px 4px rgba(232, 184, 75, 0.2); }
-        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232, 184, 75, 0); }
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(223, 183, 108, 0.4); }
+        50% { transform: scale(1.15); box-shadow: 0 0 20px 4px rgba(223, 183, 108, 0.2); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(223, 183, 108, 0); }
     }
 
     /* === BACK TO TOP === */
@@ -365,13 +401,13 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         z-index: 1000;
         transition: all 0.25s ease-out;
-        border: 1px solid rgba(232, 184, 75, 0.2);
+        border: 1px solid rgba(223, 183, 108, 0.2);
     }
     .btn-top:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
         text-decoration: none;
-        border-color: rgba(232, 184, 75, 0.5);
+        border-color: rgba(223, 183, 108, 0.5);
     }
 
     .footer {
@@ -408,6 +444,68 @@ st.markdown("""
         .section-header { font-size: 1.5em !important; }
     }
 
+    /* === SCROLL REVEAL === */
+    .reveal-on-scroll {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-on-scroll.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* === LIVE INDICATOR === */
+    .today-header {
+        display: flex;
+        align-items: center;
+        margin: 20px 0 15px 0;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        font-size: 1.4em;
+        letter-spacing: 1.5px;
+    }
+    .live-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #ff3b30;
+        border-radius: 50%;
+        margin-right: 10px;
+        box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
+        animation: live-pulse 1.5s infinite;
+        display: inline-block;
+    }
+    @keyframes live-pulse {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
+        }
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 6px rgba(255, 59, 48, 0);
+        }
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(255, 59, 48, 0);
+        }
+    }
+    .live-text {
+        color: #ff4d4d;
+        font-weight: 700;
+        text-shadow: 0 0 10px rgba(255, 77, 77, 0.2);
+    }
+    .no-matches-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px dashed rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+        color: var(--text-secondary);
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-style: italic;
+        margin-bottom: 30px;
+    }
+
     /* === REDUCED MOTION === */
     @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
@@ -415,11 +513,42 @@ st.markdown("""
             animation-delay: 0.01ms !important;
             transition-duration: 0.01ms !important;
         }
-        .bracket-card, .match-card { opacity: 1 !important; }
+        .bracket-card, .match-card, .reveal-on-scroll { opacity: 1 !important; transform: none !important; }
     }
     </style>
-""", unsafe_allow_html=True)
 
+    <script>
+    (function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, { threshold: 0.05 });
+
+        function setupReveal() {
+            document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+            document.querySelectorAll('.match-card').forEach(card => {
+                card.classList.add('reveal-on-scroll');
+                observer.observe(card);
+            });
+            document.querySelectorAll('iframe').forEach(iframe => {
+                iframe.classList.add('reveal-on-scroll');
+                observer.observe(iframe);
+            });
+        }
+        
+        if (window.revealIntervalId) {
+            clearInterval(window.revealIntervalId);
+        }
+        window.revealIntervalId = setInterval(setupReveal, 1000);
+        setTimeout(setupReveal, 300);
+    })();
+    </script>
+""")
 # ---------- FUNCIÓN PARA CONECTAR A GOOGLE SHEETS ----------
 def conectar_sheets():
     # Usar los secretos de Streamlit Cloud
@@ -502,18 +631,31 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("logo.png", use_container_width=True)
     st.markdown("""
-        <h1 class='hero-title' style='font-size: 2.5em; line-height: 1.2; margin-bottom: 30px;'>Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026</h1>
-        <div class="rules-ticker">
-            <strong class="rules-title">REGLAS DE PUNTUACIÓN</strong>
-            🎯 Por acierto de marcador exacto suman <span class="pts-value">5 puntos</span><br>
-            ✅ Por acertar ganador y diferencia de goles suman <span class="pts-value">3 puntos</span><br>
-            ✔️ Por acertar solo el ganador suman <span class="pts-value">2 puntos</span><br>
-            ❌ Todo lo demás es <span class="pts-value">0 puntos</span><br>
-            <em style="display: block; margin-top: 10px; color: #F0F2F5;">¡Que ruede el balón y veamos quién será la mejor analizadora!</em>
-        </div>
+        <h1 class='hero-title' style='font-size: 2.5em; line-height: 1.2; margin-bottom: 30px;'>
+            <span id="typewriter-text"></span><span class="typewriter-cursor">|</span>
+        </h1>
+        <script>
+            (function() {
+                const text = "Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026";
+                let i = 0;
+                const speed = 40;
+                const delayStart = 400;
+                const el = document.getElementById("typewriter-text");
+                if (!el) return;
+                
+                function typeWriter() {
+                    if (i < text.length) {
+                        el.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, speed);
+                    }
+                }
+                setTimeout(typeWriter, delayStart);
+            })();
+        </script>
     """, unsafe_allow_html=True)
 
-# ---------- BRACKET DE IAS ----------
+# ---------- BRACKET DE IAS (INVERTIDO - AHORA ARRIBA DE LAS REGLAS) ----------
 st.markdown("<h2 class='section-header'>🤖 ¿Quién será el mejor pronosticador?</h2>", unsafe_allow_html=True)
 
 ias = {
@@ -556,6 +698,18 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# ---------- REGLAS DE PUNTUACIÓN (AHORA DEBAJO DE LAS IMÁGENES CON SCROLL REVEAL) ----------
+st.markdown("""
+    <div class="rules-ticker reveal-on-scroll">
+        <strong class="rules-title">REGLAS DE PUNTUACIÓN</strong>
+        🎯 Por acierto de marcador exacto suman <span class="pts-value">5 puntos</span><br>
+        ✅ Por acertar ganador y diferencia de goles suman <span class="pts-value">3 puntos</span><br>
+        ✔️ Por acertar solo el ganador suman <span class="pts-value">2 puntos</span><br>
+        ❌ Todo lo demás es <span class="pts-value">0 puntos</span><br>
+        <em style="display: block; margin-top: 10px; color: #F0F2F5;">¡Que ruede el balón y veamos quién será la mejor analizadora!</em>
+    </div>
+""", unsafe_allow_html=True)
+
 st.divider()
 
 # ---------- CARGAR Y MOSTRAR DATOS ----------
@@ -563,8 +717,8 @@ df = cargar_datos()
 if not df.empty:
     df_procesado = procesar_puntuaciones(df)
     
-    # Mostrar tabla principal
-    st.markdown("<h2 class='section-header'>🏆 Tabla de Posiciones</h2>", unsafe_allow_html=True)
+    # Mostrar tabla principal (sin emoji de trofeo, con scroll reveal)
+    st.markdown("<h2 class='section-header reveal-on-scroll'>TABLA DE POSICIONES</h2>", unsafe_allow_html=True)
     
     # Crear tabla de resumen (totales por IA)
     resumen = pd.DataFrame({
@@ -610,7 +764,7 @@ if not df.empty:
         </div>
         '''
     
-    # Scoreboard CSS (regular string — no f-string to avoid { } escaping)
+    # Scoreboard CSS (Option C + Leader Gold Blinking)
     sb_css = """
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -622,7 +776,7 @@ if not df.empty:
     }
 
     .sb-container {
-        background: #121928;
+        background: #161B22;
         border-radius: 16px;
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -632,20 +786,17 @@ if not df.empty:
     }
 
     .sb-header {
-        background: linear-gradient(135deg, #E8B84B 0%, #D4943A 100%);
+        background: linear-gradient(135deg, #DFB76C 0%, #C99A49 100%);
         padding: 14px 24px;
         display: flex;
         align-items: center;
-        gap: 10px;
     }
-
-    .sb-header-icon { font-size: 1.4em; }
 
     .sb-header-text {
         font-family: 'Rajdhani', sans-serif;
         font-weight: 700;
         font-size: 1.3em;
-        color: #0A0E17;
+        color: #0E1117;
         text-transform: uppercase;
         letter-spacing: 2px;
     }
@@ -660,10 +811,16 @@ if not df.empty:
     }
     .sb-row:last-child { border-bottom: none; }
 
+    @keyframes gold-pulse {
+        0% { background: linear-gradient(90deg, rgba(223, 183, 108, 0.08) 0%, transparent 70%); }
+        50% { background: linear-gradient(90deg, rgba(223, 183, 108, 0.28) 0%, transparent 70%); }
+        100% { background: linear-gradient(90deg, rgba(223, 183, 108, 0.08) 0%, transparent 70%); }
+    }
+
     .sb-row.leader {
-        background: linear-gradient(90deg, rgba(232, 184, 75, 0.1) 0%, transparent 70%);
-        border-left: 4px solid #E8B84B;
+        border-left: 4px solid #DFB76C;
         padding-left: 20px;
+        animation: gold-pulse 2s infinite ease-in-out;
     }
 
     .sb-pos {
@@ -675,7 +832,7 @@ if not df.empty:
         align-items: center;
         gap: 4px;
     }
-    .sb-row.leader .sb-pos { color: #E8B84B; }
+    .sb-row.leader .sb-pos { color: #DFB76C; }
 
     .sb-medal { font-size: 1.1em; }
 
@@ -727,7 +884,7 @@ if not df.empty:
         line-height: 1;
         font-variant-numeric: tabular-nums;
     }
-    .sb-row.leader .sb-score { color: #E8B84B; }
+    .sb-row.leader .sb-score { color: #DFB76C; }
 
     @media (max-width: 600px) {
         .sb-row { grid-template-columns: 40px 1fr 70px; padding: 12px 16px; }
@@ -783,8 +940,7 @@ if not df.empty:
         "</head><body>"
         "<div class='sb-container'>"
         "<div class='sb-header'>"
-        "<span class='sb-header-icon'>🏆</span>"
-        "<span class='sb-header-text'>Tabla de Posiciones</span>"
+        "<span class='sb-header-text'>TABLA DE POSICIONES</span>"
         "</div>"
         + sb_rows +
         "</div>"
@@ -796,26 +952,45 @@ if not df.empty:
     components.html(scoreboard_component, height=sb_height)
     
     # ---------- RESULTADOS Y PREDICCIONES POR PARTIDO ----------
-    st.markdown("<h2 class='section-header' style='margin-top: 40px;'>⚽ Resultados y Predicciones</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='section-header reveal-on-scroll' style='margin-top: 40px;'>RESULTADOS Y PREDICCIONES</h2>", unsafe_allow_html=True)
     
     # Indicator mapping for points
     _ind = {5: "✅", 3: "🟡", 2: "✔️", 0: "❌"}
     
-    for idx, row in df_procesado.iterrows():
-        # Tarjeta del partido
-        with st.container():
-            # Point values for indicators (presentation only)
-            pc = int(row.get('Pts_Claude', 0))
-            pd_ = int(row.get('Pts_DeepSeek', 0))
-            pg = int(row.get('Pts_Gemini', 0))
-            pch = int(row.get('Pts_ChatGPT', 0))
-            
-            st.markdown(f"""
-<div class="match-card" style="animation-delay: {min(idx * 0.06, 1.0)}s;">
+    # Detección y ordenación de partidos por fecha (formato MM/DD/YYYY, ej: 6/30/2026)
+    date_col = 'Fecha/Hora' if 'Fecha/Hora' in df_procesado.columns else 'Fecha'
+    
+    # Parseo robusto de fecha
+    df_procesado['datetime_parsed'] = pd.to_datetime(df_procesado[date_col], format='%m/%d/%Y', errors='coerce')
+    null_mask = df_procesado['datetime_parsed'].isna()
+    if null_mask.any():
+        df_procesado.loc[null_mask, 'datetime_parsed'] = pd.to_datetime(df_procesado.loc[null_mask, date_col], errors='coerce')
+    
+    # Obtener el día de hoy
+    today = datetime.now().date()
+    
+    # Separar partidos de hoy
+    today_mask = df_procesado['datetime_parsed'].dt.date == today
+    df_today = df_procesado[today_mask]
+    
+    # Partidos restantes (excluyendo hoy)
+    df_remaining = df_procesado[~today_mask].copy()
+    df_remaining = df_remaining.sort_values(by='datetime_parsed', ascending=False, na_position='last')
+    
+    # Render card helper
+    def render_match_card(row, idx):
+        pc = int(row.get('Pts_Claude', 0))
+        pd_ = int(row.get('Pts_DeepSeek', 0))
+        pg = int(row.get('Pts_Gemini', 0))
+        pch = int(row.get('Pts_ChatGPT', 0))
+        display_date = row.get(date_col, '')
+        
+        st.markdown(f"""
+<div class="match-card">
 <div class="match-score-line">
 {row.get('Local', 'Local')} {row.get('GolesLocal', '-')} : {row.get('GolesVisitante', '-')} {row.get('Visitante', 'Visitante')}
 </div>
-<div class="match-date">📅 {row.get('Fecha', '')}</div>
+<div class="match-date">📅 {display_date}</div>
 <div class="match-predictions">
 <div class="ai-badge ia-claude">
 <div class="ai-badge-name" style="color: var(--claude);">Claude</div>
@@ -840,6 +1015,38 @@ if not df.empty:
 </div>
 </div>
 """, unsafe_allow_html=True)
+
+    # 1. Mostrar partidos de hoy
+    st.markdown("""
+        <div class="today-header reveal-on-scroll">
+            <span class="live-dot"></span><span class="live-text">PARTIDOS DE HOY</span>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    if not df_today.empty:
+        df_today_sorted = df_today.sort_values(by='datetime_parsed', ascending=True)
+        for idx, row in df_today_sorted.iterrows():
+            render_match_card(row, idx)
+    else:
+        st.markdown("""
+            <div class="no-matches-card reveal-on-scroll">
+                No hay partidos programados para hoy
+            </div>
+        """, unsafe_allow_html=True)
+
+    # 2. Mostrar los últimos 5 partidos (excluyendo hoy)
+    if not df_remaining.empty:
+        st.markdown("<h3 class='section-subheader reveal-on-scroll' style='margin-top: 30px;'>ÚLTIMOS 5 PARTIDOS</h3>", unsafe_allow_html=True)
+        df_last_5 = df_remaining.iloc[:5]
+        for idx, row in df_last_5.iterrows():
+            render_match_card(row, idx)
+            
+        # 3. Mostrar el resto de los partidos en un expansor
+        df_rest = df_remaining.iloc[5:]
+        if not df_rest.empty:
+            with st.expander("VER EL RESTO DE LOS PARTIDOS"):
+                for idx, row in df_rest.iterrows():
+                    render_match_card(row, idx)
 
 else:
     st.warning("No hay datos cargados. Agrega pronósticos desde el panel de administración.")
@@ -879,7 +1086,7 @@ if st.session_state.show_admin:
         
         # Formulario para agregar partido
         with st.form("admin_form"):
-            fecha = st.text_input("Fecha y hora (ej: 2026-06-20 15:00)")
+            fecha = st.text_input("Fecha y hora (ej: 6/30/2026 15:00)")
             local = st.text_input("Equipo Local")
             visitante = st.text_input("Equipo Visitante")
             goles_local = st.number_input("Goles Local Real", min_value=0, step=1)
