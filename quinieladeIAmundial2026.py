@@ -486,25 +486,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------- TYPEWRITER JS via components.html ----------
-components.html("""
-<script>
-    const parentDoc = window.parent.document;
-    const typeEl = parentDoc.getElementById("typewriter-text");
-    if (typeEl && !typeEl.dataset.started) {
-        typeEl.dataset.started = "true";
-        const text = "Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026";
-        let i = 0;
-        function typeWriter() {
-            if (i < text.length) {
-                typeEl.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 40);
-            }
-        }
-        setTimeout(typeWriter, 400);
-    }
-</script>
-""", height=0, width=0)
+# TYPEWRITER SCRIPT MOVED (will be inserted later)
 
 # ---------- FUNCIÓN PARA CONECTAR A GOOGLE SHEETS ----------
 def conectar_sheets():
@@ -592,6 +574,27 @@ with col2:
             <span id="typewriter-text"></span><span class="typewriter-cursor">|</span>
         </h1>
     """, unsafe_allow_html=True)
+
+# Insert typewriter script after hero title
+components.html("""
+<script>
+    const parentDoc = window.parent.document;
+    const typeEl = parentDoc.getElementById("typewriter-text");
+    if (typeEl && !typeEl.dataset.started) {
+        typeEl.dataset.started = "true";
+        const text = "Las IA compiten para ver quién es mejor prediciendo los partidos del mundial 2026";
+        let i = 0;
+        function typeWriter() {
+            if (i < text.length) {
+                typeEl.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 40);
+            }
+        }
+        setTimeout(typeWriter, 400);
+    }
+</script>
+""", height=10, width=0)
 
 # ---------- BRACKET DE IAS (INVERTIDO - AHORA ARRIBA DE LAS REGLAS) ----------
 st.markdown("<h2 class='section-header'>🤖 ¿Quién será el mejor pronosticador?</h2>", unsafe_allow_html=True)
