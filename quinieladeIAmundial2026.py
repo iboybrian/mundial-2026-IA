@@ -914,6 +914,8 @@ if not df.empty:
     # Partidos restantes (excluyendo hoy)
     df_remaining = df_procesado[~today_mask].copy()
     df_remaining = df_remaining.sort_values(by='datetime_parsed', ascending=False, na_position='last')
+    # Filter only matches that occurred before today (exclude future matches)
+    df_past = df_remaining[df_remaining['datetime_parsed'].dt.date < today].copy()
     
     # Render card helper
     def render_match_card(row, idx):
@@ -974,8 +976,8 @@ if not df.empty:
 
     # 2. Mostrar los últimos 5 partidos (excluyendo hoy)
     if not df_remaining.empty:
-        st.markdown("<h3 class='section-subheader reveal-on-scroll' style='margin-top: 30px;'>ÚLTIMOS 5 PARTIDOS</h3>", unsafe_allow_html=True)
-        df_last_5 = df_remaining.iloc[:5]
+        st.markdown("<h3 class='section-subheader reveal-on-scroll' style='margin-top: 30px;'>ÚLTIMOS 5 PARTIDOS ANTERIORES A HOY</h3>", unsafe_allow_html=True)
+        df_last_5 = df_past.iloc[:5]
         for idx, row in df_last_5.iterrows():
             render_match_card(row, idx)
             
